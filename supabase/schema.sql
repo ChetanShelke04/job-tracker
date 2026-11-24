@@ -287,7 +287,19 @@ $$;
 grant execute on function public.log_call(uuid, text, text, date) to authenticated;
 
 -- ==============================================================================
--- 10. MULTI-USER ISOLATION VERIFICATION TEST SNIPPET
+-- 10. EXPLICIT GRANTS FOR SUPABASE ROLES
+-- Ensures authenticated users have permission on tables (Row Level Security handles row isolation)
+-- ==============================================================================
+grant usage on schema public to anon, authenticated;
+grant all on all tables in schema public to anon, authenticated;
+grant all on all sequences in schema public to anon, authenticated;
+grant all on all routines in schema public to anon, authenticated;
+
+alter default privileges in schema public grant all on tables to anon, authenticated;
+alter default privileges in schema public grant all on sequences to anon, authenticated;
+
+-- ==============================================================================
+-- 11. MULTI-USER ISOLATION VERIFICATION TEST SNIPPET
 -- (Run this snippet in SQL Editor to test and verify RLS isolation between User A & User B)
 -- ==============================================================================
 /*

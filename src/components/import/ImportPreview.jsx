@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { supabase } from '../../lib/supabase';
+import { supabase, formatSupabaseError } from '../../lib/supabase';
 import { chunkArray } from '../../lib/importer';
 import { exportToCsv } from '../../lib/csv';
 import StatusBadge from '../common/StatusBadge';
@@ -54,13 +54,21 @@ export default function ImportPreview({ isOpen, onClose, previewData, onImportCo
     setErrorMessage('');
 
     try {
+      const { data: { user }, error: userErr } = await supabase.auth.getUser();
+      if (userErr || !user) {
+        throw new Error('Your session has expired or you are not signed in. Please refresh and log in again.');
+      }
+
       const chunks = chunkArray(validRows, 200);
       let importedCount = 0;
       const oldToNewIdMap = new Map();
 
       for (let i = 0; i < chunks.length; i++) {
         const chunk = chunks[i];
-        const payload = chunk.map(({ oldId, ...rest }) => rest);
+        const payload = chunk.map(({ oldId, ...rest }) => ({
+          ...rest,
+          user_id: user.id
+        }));
 
         const { data, error } = await supabase
           .from('contacts')
@@ -88,6 +96,7 @@ export default function ImportPreview({ isOpen, onClose, previewData, onImportCo
           const newContactId = oldToNewIdMap.get(call.oldContactId);
           if (newContactId) {
             validCallsToInsert.push({
+              user_id: user.id,
               contact_id: newContactId,
               outcome: call.outcome,
               notes: call.notes,
@@ -115,7 +124,7 @@ export default function ImportPreview({ isOpen, onClose, previewData, onImportCo
       }, 400);
     } catch (err) {
       console.error('Import failed:', err);
-      setErrorMessage(err.message || 'Import failed. Some records may not have been saved.');
+      setErrorMessage(formatSupabaseError(err));
       setImporting(false);
     }
   };

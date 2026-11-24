@@ -149,10 +149,13 @@ export function ContactsProvider({ children }) {
     setContacts(prev => [optimisticContact, ...prev]);
 
     try {
-      // Frontend never sends user_id; database applies default auth.uid()
+      const payload = {
+        ...contactPayload,
+        ...(user?.id ? { user_id: user.id } : {})
+      };
       const { data, error } = await supabase
         .from('contacts')
-        .insert([contactPayload])
+        .insert([payload])
         .select()
         .single();
 
@@ -385,9 +388,14 @@ export function ContactsProvider({ children }) {
 
     setSaveStatus('saving');
     try {
+      const payload = contactsToInsert.map(c => ({
+        ...c,
+        ...(user?.id ? { user_id: user.id } : {})
+      }));
+
       const { data, error } = await supabase
         .from('contacts')
-        .insert(contactsToInsert)
+        .insert(payload)
         .select();
 
       if (error) throw error;
@@ -425,9 +433,13 @@ export function ContactsProvider({ children }) {
     setApplications(prev => [optimisticApp, ...prev]);
 
     try {
+      const payload = {
+        ...appPayload,
+        ...(user?.id ? { user_id: user.id } : {})
+      };
       const { data, error } = await supabase
         .from('job_applications')
-        .insert([appPayload])
+        .insert([payload])
         .select()
         .single();
 
