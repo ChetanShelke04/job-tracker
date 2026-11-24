@@ -19,11 +19,13 @@ import {
 } from 'lucide-react';
 
 export default function Applications() {
-  const { applications, softDeleteApplication } = useContacts();
+  const { applications, softDeleteApplication, updateApplication } = useContacts();
 
   const [viewMode, setViewMode] = useState('kanban'); // 'kanban' | 'table'
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedStatus, setSelectedStatus] = useState('ALL');
+  const [draggedAppId, setDraggedAppId] = useState(null);
+  const [dragOverCol, setDragOverCol] = useState(null);
 
   const [modalOpen, setModalOpen] = useState(false);
   const [appToEdit, setAppToEdit] = useState(null);
@@ -348,7 +350,29 @@ export default function Applications() {
               });
 
               return (
-                <div key={col.title} className="kanban-column-box">
+                <div
+                  key={col.title}
+                  className={`kanban-column-box ${dragOverCol === col.statusKey ? 'drag-over' : ''}`}
+                  onDragOver={(e) => {
+                    e.preventDefault();
+                    e.dataTransfer.dropEffect = 'move';
+                  }}
+                  onDragEnter={() => setDragOverCol(col.statusKey)}
+                  onDragLeave={(e) => {
+                    if (!e.currentTarget.contains(e.relatedTarget)) {
+                      setDragOverCol(null);
+                    }
+                  }}
+                  onDrop={async (e) => {
+                    e.preventDefault();
+                    setDragOverCol(null);
+                    const appId = e.dataTransfer.getData('text/plain') || draggedAppId;
+                    if (appId) {
+                      await updateApplication(appId, { application_status: col.statusKey });
+                    }
+                    setDraggedAppId(null);
+                  }}
+                >
                   <div className="kanban-column-title">
                     <span>{col.title}</span>
                     <span style={{
@@ -368,7 +392,21 @@ export default function Applications() {
                       <div
                         key={app.id}
                         className="kanban-task-card"
+                        draggable
+                        onDragStart={(e) => {
+                          e.dataTransfer.setData('text/plain', app.id);
+                          e.dataTransfer.effectAllowed = 'move';
+                          setDraggedAppId(app.id);
+                        }}
+                        onDragEnd={() => {
+                          setDraggedAppId(null);
+                          setDragOverCol(null);
+                        }}
                         onClick={() => handleOpenEdit(app)}
+                        style={{
+                          opacity: draggedAppId === app.id ? 0.45 : 1,
+                          cursor: 'grab'
+                        }}
                       >
                         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '4px' }}>
                           <span style={{ fontWeight: 700, fontSize: '13.5px', color: '#0f172a' }}>

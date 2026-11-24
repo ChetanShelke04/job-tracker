@@ -250,15 +250,18 @@ npm install
 > To ensure your authenticated web user has permission to read and insert records while Row Level Security (RLS) protects your data, run this SQL query in the **SQL Editor**:
 >
 > ```sql
-> -- Grant schema and table permissions to Supabase roles
-> GRANT USAGE ON SCHEMA public TO anon, authenticated, service_role;
-> GRANT ALL ON ALL TABLES IN SCHEMA public TO anon, authenticated, service_role;
-> GRANT ALL ON ALL SEQUENCES IN SCHEMA public TO anon, authenticated, service_role;
-> GRANT ALL ON ALL ROUTINES IN SCHEMA public TO anon, authenticated, service_role;
+> -- 1. Grant schema usage
+> GRANT USAGE ON SCHEMA public TO anon, authenticated;
 > 
-> ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT ALL ON TABLES TO anon, authenticated, service_role;
-> ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT ALL ON SEQUENCES TO anon, authenticated, service_role;
-> ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT ALL ON ROUTINES TO anon, authenticated, service_role;
+> -- 2. Grant table permissions (Only authenticated users; RLS isolates per-user records)
+> GRANT SELECT, INSERT, UPDATE, DELETE ON ALL TABLES IN SCHEMA public TO authenticated;
+> GRANT USAGE, SELECT ON ALL SEQUENCES IN SCHEMA public TO authenticated;
+> GRANT EXECUTE ON ALL ROUTINES IN SCHEMA public TO authenticated;
+> 
+> -- 3. Default privileges for future tables
+> ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT SELECT, INSERT, UPDATE, DELETE ON TABLES TO authenticated;
+> ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT USAGE, SELECT ON SEQUENCES TO authenticated;
+> ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT EXECUTE ON ROUTINES TO authenticated;
 > ```
 
 ---

@@ -30,6 +30,8 @@ export default function FollowUps() {
 
   const overdueTotal = contacts.filter(c => c.followup_date && isOverdue(c.followup_date)).length;
   const todayTotal = contacts.filter(c => c.followup_date && isDueToday(c.followup_date)).length;
+  const upcomingTotal = contacts.filter(c => c.followup_date && !isOverdue(c.followup_date) && !isDueToday(c.followup_date)).length;
+  const allScheduledTotal = contacts.filter(c => Boolean(c.followup_date)).length;
 
   const dueContacts = useMemo(() => {
     return contacts.filter(c => {
@@ -39,6 +41,8 @@ export default function FollowUps() {
 
       if (activeTab === 'overdue') return overdue;
       if (activeTab === 'today') return dueToday;
+      if (activeTab === 'upcoming') return !overdue && !dueToday;
+      if (activeTab === 'all-scheduled') return true;
       return overdue || dueToday;
     }).sort((a, b) => {
       return (a.followup_date || '').localeCompare(b.followup_date || '');
@@ -103,6 +107,20 @@ export default function FollowUps() {
         >
           <span style={{ color: activeTab === 'today' ? '#ffffff' : '#d97706' }}>●</span>
           Due Today ({todayTotal})
+        </button>
+        <button
+          type="button"
+          className={`filter-chip ${activeTab === 'upcoming' ? 'active' : ''}`}
+          onClick={() => handleTabChange('upcoming')}
+        >
+          Upcoming ({upcomingTotal})
+        </button>
+        <button
+          type="button"
+          className={`filter-chip ${activeTab === 'all-scheduled' ? 'active' : ''}`}
+          onClick={() => handleTabChange('all-scheduled')}
+        >
+          All Scheduled ({allScheduledTotal})
         </button>
       </div>
 

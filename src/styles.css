@@ -927,6 +927,14 @@ tbody tr:last-child td {
   max-width: 860px;
 }
 
+.modal-card form {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+}
+
 @keyframes modalScaleIn {
   from {
     opacity: 0;
@@ -945,6 +953,7 @@ tbody tr:last-child td {
   justify-content: space-between;
   align-items: center;
   background: #ffffff;
+  flex-shrink: 0;
 }
 
 .modal-header h3 {
@@ -973,6 +982,7 @@ tbody tr:last-child td {
   display: flex;
   justify-content: flex-end;
   gap: 8px;
+  flex-shrink: 0;
 }
 
 .form-grid-2 {
@@ -1191,6 +1201,12 @@ tbody tr:last-child td {
   display: flex;
   flex-direction: column;
   max-height: calc(100vh - 220px);
+  transition: border-color 0.15s ease, background-color 0.15s ease;
+}
+
+.kanban-column-box.drag-over {
+  border: 2px dashed #2563eb;
+  background-color: #eff6ff;
 }
 
 .kanban-column-title {
@@ -1393,6 +1409,14 @@ tbody tr:last-child td {
   .modal-card {
     border-radius: var(--radius-md);
     max-height: 94vh;
+  }
+  .modal-footer {
+    padding: 10px 14px;
+  }
+  .modal-footer .btn {
+    min-height: 44px;
+    padding: 8px 16px;
+    font-size: 13.5px;
   }
   .btn {
     min-height: 42px;

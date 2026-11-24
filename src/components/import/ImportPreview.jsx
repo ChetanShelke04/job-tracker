@@ -25,7 +25,8 @@ export default function ImportPreview({ isOpen, onClose, previewData, onImportCo
     validRows = [],
     duplicateRows = [],
     invalidRows = [],
-    pendingCalls = []
+    pendingCalls = [],
+    pendingApplications = []
   } = previewData;
 
   const handleDownloadSkipped = () => {
@@ -44,8 +45,8 @@ export default function ImportPreview({ isOpen, onClose, previewData, onImportCo
   };
 
   const handleConfirmImport = async () => {
-    if (validRows.length === 0) {
-      alert('No valid contacts to import.');
+    if (validRows.length === 0 && pendingApplications.length === 0) {
+      alert('No valid records to import.');
       return;
     }
 
@@ -114,6 +115,32 @@ export default function ImportPreview({ isOpen, onClose, previewData, onImportCo
               .insert(callChunks[j]);
             if (callErr) console.warn('Could not import call chunk:', callErr);
           }
+        }
+      }
+
+      // 3. Import Job Applications if present in backup
+      if (pendingApplications.length > 0) {
+        const validAppsToInsert = pendingApplications.map(app => ({
+          user_id: user.id,
+          company_name: app.company_name || app.company || 'Company',
+          job_title: app.job_title || app.title || 'Role',
+          location: app.location || null,
+          job_url: app.job_url || app.url || null,
+          application_date: app.application_date || null,
+          expected_ctc: app.expected_ctc ? Number(app.expected_ctc) : null,
+          offered_ctc: app.offered_ctc ? Number(app.offered_ctc) : null,
+          application_status: app.application_status || app.status || 'Applied',
+          recruiter_name: app.recruiter_name || null,
+          recruiter_phone: app.recruiter_phone || null,
+          notes: app.notes || null
+        }));
+
+        const appChunks = chunkArray(validAppsToInsert, 200);
+        for (let k = 0; k < appChunks.length; k++) {
+          const { error: appErr } = await supabase
+            .from('job_applications')
+            .insert(appChunks[k]);
+          if (appErr) console.warn('Could not import application chunk:', appErr);
         }
       }
 

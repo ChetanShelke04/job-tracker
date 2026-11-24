@@ -75,55 +75,94 @@ export default function Trash() {
               <p>No contacts have been soft-deleted.</p>
             </div>
           ) : (
-            <div className="table-container">
-              <table>
-                <thead>
-                  <tr>
-                    <th>HR Name & Company</th>
-                    <th>Phone</th>
-                    <th>Status</th>
-                    <th>Deleted Date</th>
-                    <th style={{ textAlign: 'right' }}>Actions</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {trashContacts.map(c => (
-                    <tr key={c.id}>
-                      <td>
-                        <div className="table-cell-name">{c.name}</div>
-                        <div className="table-cell-sub">{c.company}</div>
-                      </td>
-                      <td>{c.phone}</td>
-                      <td><StatusBadge status={c.status} /></td>
-                      <td style={{ fontSize: '12px', color: '#64748b' }}>
-                        {formatDate(c.deleted_at)}
-                      </td>
-                      <td>
-                        <div className="row-actions-group" style={{ justifyContent: 'flex-end' }}>
-                          <button
-                            type="button"
-                            className="btn btn-sm btn-success"
-                            onClick={() => restoreContact(c.id)}
-                            title="Restore Contact"
-                          >
-                            <RotateCcw size={12} />
-                            <span>Restore</span>
-                          </button>
-                          <button
-                            type="button"
-                            className="btn btn-sm btn-icon btn-danger"
-                            onClick={() => handlePermanentDeleteContact(c)}
-                            title="Delete Permanently"
-                          >
-                            <Trash2 size={14} />
-                          </button>
-                        </div>
-                      </td>
+            <>
+              <div className="table-container desktop-table-view">
+                <table>
+                  <thead>
+                    <tr>
+                      <th>HR Name & Company</th>
+                      <th>Phone</th>
+                      <th>Status</th>
+                      <th>Deleted Date</th>
+                      <th style={{ textAlign: 'right' }}>Actions</th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
+                  </thead>
+                  <tbody>
+                    {trashContacts.map(c => (
+                      <tr key={c.id}>
+                        <td>
+                          <div className="table-cell-name">{c.name}</div>
+                          <div className="table-cell-sub">{c.company}</div>
+                        </td>
+                        <td>{c.phone}</td>
+                        <td><StatusBadge status={c.status} /></td>
+                        <td style={{ fontSize: '12px', color: '#64748b' }}>
+                          {formatDate(c.deleted_at)}
+                        </td>
+                        <td>
+                          <div className="row-actions-group" style={{ justifyContent: 'flex-end' }}>
+                            <button
+                              type="button"
+                              className="btn btn-sm btn-success"
+                              onClick={() => restoreContact(c.id)}
+                              title="Restore Contact"
+                            >
+                              <RotateCcw size={12} />
+                              <span>Restore</span>
+                            </button>
+                            <button
+                              type="button"
+                              className="btn btn-sm btn-icon btn-danger"
+                              onClick={() => handlePermanentDeleteContact(c)}
+                              title="Delete Permanently"
+                            >
+                              <Trash2 size={14} />
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+
+              {/* Mobile Card Stack */}
+              <div className="mobile-card-stack">
+                {trashContacts.map(c => (
+                  <div key={c.id} className="crm-mobile-card">
+                    <div className="mobile-card-header">
+                      <div>
+                        <div className="mobile-card-title">{c.name}</div>
+                        <div className="mobile-card-sub">{c.company} · {c.phone}</div>
+                      </div>
+                      <StatusBadge status={c.status} />
+                    </div>
+                    <div style={{ fontSize: '11.5px', color: '#64748b', marginBottom: '10px' }}>
+                      Deleted on {formatDate(c.deleted_at)}
+                    </div>
+                    <div className="mobile-card-actions">
+                      <button
+                        type="button"
+                        className="btn btn-sm btn-success"
+                        style={{ flex: 1 }}
+                        onClick={() => restoreContact(c.id)}
+                      >
+                        <RotateCcw size={13} />
+                        <span>Restore</span>
+                      </button>
+                      <button
+                        type="button"
+                        className="btn btn-sm btn-icon btn-danger"
+                        onClick={() => handlePermanentDeleteContact(c)}
+                        title="Delete Permanently"
+                      >
+                        <Trash2 size={14} />
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </>
           )
         ) : (
           trashApplications.length === 0 ? (
@@ -133,53 +172,92 @@ export default function Trash() {
               <p>No job applications have been soft-deleted.</p>
             </div>
           ) : (
-            <div className="table-container">
-              <table>
-                <thead>
-                  <tr>
-                    <th>Company & Job Title</th>
-                    <th>Status</th>
-                    <th>Deleted Date</th>
-                    <th style={{ textAlign: 'right' }}>Actions</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {trashApplications.map(app => (
-                    <tr key={app.id}>
-                      <td>
-                        <div className="table-cell-name">{app.company_name}</div>
-                        <div className="table-cell-sub">{app.job_title}</div>
-                      </td>
-                      <td><StatusBadge status={app.application_status} type="application" /></td>
-                      <td style={{ fontSize: '12px', color: '#64748b' }}>
-                        {formatDate(app.deleted_at)}
-                      </td>
-                      <td>
-                        <div className="row-actions-group" style={{ justifyContent: 'flex-end' }}>
-                          <button
-                            type="button"
-                            className="btn btn-sm btn-success"
-                            onClick={() => restoreApplication(app.id)}
-                            title="Restore Application"
-                          >
-                            <RotateCcw size={12} />
-                            <span>Restore</span>
-                          </button>
-                          <button
-                            type="button"
-                            className="btn btn-sm btn-icon btn-danger"
-                            onClick={() => handlePermanentDeleteApp(app)}
-                            title="Delete Permanently"
-                          >
-                            <Trash2 size={14} />
-                          </button>
-                        </div>
-                      </td>
+            <>
+              <div className="table-container desktop-table-view">
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Company & Job Title</th>
+                      <th>Status</th>
+                      <th>Deleted Date</th>
+                      <th style={{ textAlign: 'right' }}>Actions</th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
+                  </thead>
+                  <tbody>
+                    {trashApplications.map(app => (
+                      <tr key={app.id}>
+                        <td>
+                          <div className="table-cell-name">{app.company_name}</div>
+                          <div className="table-cell-sub">{app.job_title}</div>
+                        </td>
+                        <td><StatusBadge status={app.application_status} type="application" /></td>
+                        <td style={{ fontSize: '12px', color: '#64748b' }}>
+                          {formatDate(app.deleted_at)}
+                        </td>
+                        <td>
+                          <div className="row-actions-group" style={{ justifyContent: 'flex-end' }}>
+                            <button
+                              type="button"
+                              className="btn btn-sm btn-success"
+                              onClick={() => restoreApplication(app.id)}
+                              title="Restore Application"
+                            >
+                              <RotateCcw size={12} />
+                              <span>Restore</span>
+                            </button>
+                            <button
+                              type="button"
+                              className="btn btn-sm btn-icon btn-danger"
+                              onClick={() => handlePermanentDeleteApp(app)}
+                              title="Delete Permanently"
+                            >
+                              <Trash2 size={14} />
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+
+              {/* Mobile Card Stack */}
+              <div className="mobile-card-stack">
+                {trashApplications.map(app => (
+                  <div key={app.id} className="crm-mobile-card">
+                    <div className="mobile-card-header">
+                      <div>
+                        <div className="mobile-card-title">{app.company_name}</div>
+                        <div className="mobile-card-sub">{app.job_title}</div>
+                      </div>
+                      <StatusBadge status={app.application_status} type="application" />
+                    </div>
+                    <div style={{ fontSize: '11.5px', color: '#64748b', marginBottom: '10px' }}>
+                      Deleted on {formatDate(app.deleted_at)}
+                    </div>
+                    <div className="mobile-card-actions">
+                      <button
+                        type="button"
+                        className="btn btn-sm btn-success"
+                        style={{ flex: 1 }}
+                        onClick={() => restoreApplication(app.id)}
+                      >
+                        <RotateCcw size={13} />
+                        <span>Restore</span>
+                      </button>
+                      <button
+                        type="button"
+                        className="btn btn-sm btn-icon btn-danger"
+                        onClick={() => handlePermanentDeleteApp(app)}
+                        title="Delete Permanently"
+                      >
+                        <Trash2 size={14} />
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </>
           )
         )}
       </section>

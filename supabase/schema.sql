@@ -226,6 +226,7 @@ create or replace function public.log_call(
 returns jsonb
 language plpgsql
 security invoker
+set search_path = public, pg_temp
 as $$
 declare
   v_user_id uuid := auth.uid();
@@ -283,20 +284,25 @@ begin
 end;
 $$;
 
--- Grant execution to authenticated users
+-- Revoke execution from public/anon, grant exclusively to authenticated
+revoke execute on function public.log_call(uuid, text, text, date) from public, anon;
 grant execute on function public.log_call(uuid, text, text, date) to authenticated;
 
 -- ==============================================================================
--- 10. EXPLICIT GRANTS FOR SUPABASE ROLES
--- Ensures authenticated users have permission on tables (Row Level Security handles row isolation)
+-- 10. LEAST-PRIVILEGE GRANTS FOR SUPABASE ROLES
+-- anon: Only USAGE on public schema (cannot select, insert, update, or delete tables)
+-- authenticated: SELECT, INSERT, UPDATE, DELETE on tables (enforced by RLS)
 -- ==============================================================================
 grant usage on schema public to anon, authenticated;
-grant all on all tables in schema public to anon, authenticated;
-grant all on all sequences in schema public to anon, authenticated;
-grant all on all routines in schema public to anon, authenticated;
 
-alter default privileges in schema public grant all on tables to anon, authenticated;
-alter default privileges in schema public grant all on sequences to anon, authenticated;
+-- Only authenticated users have table-level access (RLS enforces row-level isolation)
+grant select, insert, update, delete on all tables in schema public to authenticated;
+grant usage, select on all sequences in schema public to authenticated;
+grant execute on all routines in schema public to authenticated;
+
+alter default privileges in schema public grant select, insert, update, delete on tables to authenticated;
+alter default privileges in schema public grant usage, select on sequences to authenticated;
+alter default privileges in schema public grant execute on routines to authenticated;
 
 -- ==============================================================================
 -- 11. MULTI-USER ISOLATION VERIFICATION TEST SNIPPET
