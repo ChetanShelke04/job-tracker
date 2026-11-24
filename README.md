@@ -433,6 +433,17 @@ Priya Sharma,Google,+919876543210,priya@google.com,Connected,2026-11-30,2026-12-
 This means PostgreSQL table permissions were not granted to the `authenticated` role.
 - **Fix**: Open [Supabase SQL Editor](https://supabase.com/dashboard/project/lofzkzwshfazvmwvrjpd/sql/new), paste the grant script from [Step 3](#step-3-run-database-schema--security-grants), and click **Run**.
 
+#### 2. Why do I see "Email confirmation is pending. Please verify your email or disable confirmation in Supabase"?
+By default, Supabase requires users to click an email verification link before logging in. Since username accounts use internal addresses (e.g. `username@jobtracker.app`), no email is delivered.
+- **Instant Fix for existing users (SQL)**: In your **Supabase SQL Editor**, run:
+  ```sql
+  UPDATE auth.users SET email_confirmed_at = now() WHERE email_confirmed_at IS NULL;
+  ```
+- **Permanent Fix for all future users**:
+  1. In Supabase Dashboard, go to **Authentication** → **Providers** → **Email**.
+  2. Toggle **"Confirm email"** to **OFF** (Disabled).
+  3. Click **Save**. All newly registered users can now log in immediately!
+
 #### 2. If a friend forgets their password, can I view it in the Supabase database?
 No. Passwords in Supabase are hashed using irreversible `bcrypt` algorithms. Even database administrators cannot see plain passwords.
 - **Fix**: To change a user's password, go to **Supabase Dashboard** → **Authentication** → **Users** → click the `...` menu next to the user → click **Send password recovery** or manually set a new password.
