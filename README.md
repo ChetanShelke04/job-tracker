@@ -88,16 +88,35 @@ The **Job Tracker** is built to solve the chaos of job searching. Instead of mes
 
 ## 🚀 Complete Step-by-Step Feature Walkthrough
 
-### 1. Authentication & Simplified Username Login
-- **Username or Email Input**: Users can log in by simply entering their username (e.g., `chetan`) and password. The system automatically maps this to `chetan@jobtracker.app` internally for Supabase Auth.
-- **Session Persistence**: Sessions are saved in browser `localStorage` and automatically refreshed in the background without logging the user out.
-- **Route Protection**: Unauthenticated requests to any page are automatically redirected to `/login`, preserving the intended destination path.
-- **User Indicator**: The sidebar footer displays an avatar with the user's initial, username, and account status.
-- **Password Reset**: Includes a built-in password reset flow that triggers an automated reset link via Supabase Auth.
+### 1. Production Authentication & Role-Based Access Control
+
+- **Username OR Email Login**: Users can sign in using either their chosen unique username (e.g., `chetan`) or their registered email address (`chetan@gmail.com`).
+  - Username resolution is performed securely via a PostgreSQL stored procedure (`public.get_login_email`) without exposing unrestricted public table queries or enabling account enumeration.
+- **Dedicated Registration**:
+  - Fields: Full Name, Unique Username, Real Email Address, Password, Confirm Password, and Account Type (`User` / `HR`).
+  - Real-time username availability detection with debounced backend verification (`public.check_username_available`).
+  - Interactive password strength meter (Weak / Moderate / Strong).
+- **Email Verification Workflow**:
+  - Full email confirmation lifecycle via Supabase Auth (`/verify-email`).
+  - Rate-limited resend confirmation link functionality with a 60-second cooldown timer.
+  - Protected routes strictly guard against unverified email access.
+- **Password Recovery & Reset**:
+  - Forgot password request page (`/forgot-password`) with rate-limiting and anti-enumeration generic responses.
+  - Secure reset password callback page (`/reset-password`) with password strength checks.
+- **In-App Password Change**:
+  - Inside Settings (`/settings`), authenticated users can update their password after re-verifying their current password.
+- **Role-Based Authorization (User vs HR)**:
+  - **User (Job Seeker)**: Focused on personal job applications (`/applications`), interview scheduling, and application status tracking.
+  - **HR (Recruiter)**: Full access to HR recruiter calling directory (`/contacts`), call history (`calls`), callbacks (`/follow-ups`), and bulk imports.
+  - Role separation is enforced at the database layer via PostgreSQL Row Level Security (RLS) on `public.contacts` and `public.profiles`.
+- **Session Persistence & Synchronization**:
+  - Sessions automatically refresh via Supabase GoTrue tokens.
+  - Changes across multiple browser tabs stay synchronized in real time via `onAuthStateChange`.
 
 ---
 
 ### 2. Modern App Layout & Mobile UX
+
 - **Desktop Sidebar (Screens ≥ 1024px)**:
   - Sticky left sidebar (width: 240px).
   - Clean brand lockup with blue gradient phone icon and "Job Tracker" title (no bulky subtitles).
@@ -119,6 +138,7 @@ The **Job Tracker** is built to solve the chaos of job searching. Instead of mes
 ---
 
 ### 3. Dashboard Screen
+
 - **5 High-Impact Metric Cards**:
   1. **Total HR Contacts**: Blue accent bar. Total active recruiters in directory.
   2. **Calls Made**: Green accent bar. Total outreach calls recorded.
@@ -126,14 +146,15 @@ The **Job Tracker** is built to solve the chaos of job searching. Instead of mes
   4. **Overdue Follow-ups**: Red accent bar. Callbacks that were missed or overdue.
   5. **Active Applications**: Purple accent bar. Job opportunities currently in interview stages.
 - **Urgent & Upcoming Follow-ups Section**: Shows overdue callbacks first with an alert icon, recruiter name, company, clickable phone pill, and quick "Log Call" button.
-- **Recent Call Activities Section**: Displays the latest calls made, conversation outcomes (*Connected*, *Busy*, *Resume Requested*), and brief notes.
+- **Recent Call Activities Section**: Displays the latest calls made, conversation outcomes (_Connected_, _Busy_, _Resume Requested_), and brief notes.
 - **Quick Action Bar**: Buttons for **Bulk Add** and **Add Contact**.
 
 ---
 
 ### 4. HR Contacts Directory
+
 - **Instant Live Search**: Filters contacts instantaneously across Name, Company, Phone number, and Discussion notes without reloading.
-- **Category Filter Chips**: Filter contacts by status pills (*All*, *Not Called*, *Connected*, *Resume Requested*, *Interview Scheduled*, etc.).
+- **Category Filter Chips**: Filter contacts by status pills (_All_, _Not Called_, _Connected_, _Resume Requested_, _Interview Scheduled_, etc.).
 - **Clickable Call Pills**: Phone numbers are wrapped in styled touch pills (`tel:`) that open mobile dialers directly on phones.
 - **Duplicate Phone Detection**:
   - Automatically extracts the rightmost 10 digits (`phone_key`).
@@ -148,9 +169,10 @@ The **Job Tracker** is built to solve the chaos of job searching. Instead of mes
 ---
 
 ### 5. One-Click Call Logging & History
+
 - **Atomic Call Logging**:
   - Clicking **Log Call** opens a focused dialog.
-  - Select Call Outcome (*Connected*, *Busy — Call Later*, *No Answer*, *Resume Requested*, *Interview Scheduled*, etc.).
+  - Select Call Outcome (_Connected_, _Busy — Call Later_, _No Answer_, _Resume Requested_, _Interview Scheduled_, etc.).
   - Set a **Next Follow-up Date**.
   - Enter **Discussion Notes**.
   - Calls PostgreSQL stored function `public.log_call(...)`, which atomically:
@@ -164,6 +186,7 @@ The **Job Tracker** is built to solve the chaos of job searching. Instead of mes
 ---
 
 ### 6. Follow-ups Management & Quick Reschedule
+
 - **Dedicated Follow-up Views**: Tabbed filters for **Overdue**, **Today**, **Upcoming**, and **All**.
 - **Overdue Badges**: Clear visual warnings with days overdue (`Overdue by 3 days`).
 - **1-Click Reschedule Shortcuts**:
@@ -175,14 +198,16 @@ The **Job Tracker** is built to solve the chaos of job searching. Instead of mes
 ---
 
 ### 7. Job Applications Pipeline
+
 - **Detailed Tracking**: Track Company Name, Job Title, Job Location, Job URL, Application Date, Expected CTC, Offered CTC, Status, Recruiter Details, and Notes.
 - **Dual Visual Modes**:
   - **Table View**: Compact, sortable spreadsheet style.
-  - **Kanban Board**: Drag-and-drop / stage columns (*Applied*, *Screening*, *Interviewing*, *Offered*, *Rejected*, *Withdrawn*).
+  - **Kanban Board**: Drag-and-drop / stage columns (_Applied_, _Screening_, _Interviewing_, _Offered_, _Rejected_, _Withdrawn_).
 
 ---
 
 ### 8. Import & Export Data Center
+
 - **Complete JSON Backup**:
   - One-click export of your entire database (Contacts, Calls, Applications) into a clean, portable `.json` file.
   - Includes schema versioning and timestamps.
@@ -199,6 +224,7 @@ The **Job Tracker** is built to solve the chaos of job searching. Instead of mes
 ---
 
 ### 9. Trash & Data Recovery
+
 - Soft-deleted contacts and job applications are kept safely in the Trash.
 - **Restore**: 1-click restore restores records back to the active directory.
 - **Permanent Purge**: Permanently deletes records with confirmation dialog.
@@ -208,6 +234,7 @@ The **Job Tracker** is built to solve the chaos of job searching. Instead of mes
 ## 🛠️ Step-by-Step Installation & Setup Guide
 
 ### Prerequisites
+
 - [Node.js 18+](https://nodejs.org/) installed on your machine.
 - A free [Supabase](https://supabase.com/) account.
 - A free [GitHub](https://github.com/) account.
@@ -216,6 +243,7 @@ The **Job Tracker** is built to solve the chaos of job searching. Instead of mes
 ---
 
 ### Step 1: Clone Repository & Install Dependencies
+
 Open your terminal and run:
 
 ```bash
@@ -232,15 +260,17 @@ npm install
 ---
 
 ### Step 2: Create a Free Supabase Project
+
 1. Go to [supabase.com](https://supabase.com) and log in.
 2. Click **New Project**.
 3. Choose an Organization, enter a project name (e.g. `job-tracker`), and set a strong database password.
-4. Select the region closest to you (e.g. *Central India (Mumbai)*).
+4. Select the region closest to you (e.g. _Central India (Mumbai)_).
 5. Click **Create new project** and wait ~2 minutes for it to initialize.
 
 ---
 
 ### Step 3: Run Database Schema & Security Grants
+
 1. In your Supabase project dashboard, click **SQL Editor** on the left menu (icon `>_`).
 2. Click **New Query** (or the `+` icon).
 3. Open `supabase/schema.sql` from this repository, copy its entire contents, paste them into the SQL Editor, and click the green **Run** button.
@@ -252,12 +282,12 @@ npm install
 > ```sql
 > -- 1. Grant schema usage
 > GRANT USAGE ON SCHEMA public TO anon, authenticated;
-> 
+>
 > -- 2. Grant table permissions (Only authenticated users; RLS isolates per-user records)
 > GRANT SELECT, INSERT, UPDATE, DELETE ON ALL TABLES IN SCHEMA public TO authenticated;
 > GRANT USAGE, SELECT ON ALL SEQUENCES IN SCHEMA public TO authenticated;
 > GRANT EXECUTE ON ALL ROUTINES IN SCHEMA public TO authenticated;
-> 
+>
 > -- 3. Default privileges for future tables
 > ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT SELECT, INSERT, UPDATE, DELETE ON TABLES TO authenticated;
 > ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT USAGE, SELECT ON SEQUENCES TO authenticated;
@@ -278,7 +308,7 @@ npm install
    - Password: `YourSecretPassword123!`
    - Toggle **Auto Confirm User?** to **ON**.
    - Click **Create user**.
-7. *(Optional)* Create accounts for your friends in the same way (e.g., `friend1@jobtracker.app`, `friend2@jobtracker.app`).
+7. _(Optional)_ Create accounts for your friends in the same way (e.g., `friend1@jobtracker.app`, `friend2@jobtracker.app`).
 
 > [!TIP]
 > When logging into the website, users only need to enter their username (e.g., `chetan`) and password!
@@ -289,7 +319,7 @@ npm install
 
 1. In your Supabase Dashboard, go to **Project Settings** (gear icon) → **API**.
 2. Copy your **Project URL** (e.g., `https://lofzkzwshfazvmwvrjpd.supabase.co`).
-3. Copy your **anon / public key** (the string under *Project API keys*).
+3. Copy your **anon / public key** (the string under _Project API keys_).
 4. In your project root, create a file named `.env`:
 
 ```env
@@ -338,12 +368,12 @@ Open `http://localhost:5173` in your browser. Enter your username (`chetan`) and
 
 ### Database Tables
 
-| Table Name | Description | Key Columns |
-| :--- | :--- | :--- |
-| `contacts` | Directory of HR recruiters | `id`, `user_id`, `name`, `company`, `phone`, `phone_key`, `email`, `status`, `followup_date`, `notes`, `deleted_at` |
-| `calls` | Chronological log of calls | `id`, `user_id`, `contact_id`, `outcome`, `notes`, `followup_date`, `called_at` |
-| `job_applications` | Job hunt pipeline | `id`, `user_id`, `company_name`, `job_title`, `application_status`, `expected_ctc`, `offered_ctc`, `job_url`, `deleted_at` |
-| `activities` | Scheduled reminders & tasks| `id`, `user_id`, `contact_id`, `activity_type`, `scheduled_at`, `completed` |
+| Table Name         | Description                 | Key Columns                                                                                                                |
+| :----------------- | :-------------------------- | :------------------------------------------------------------------------------------------------------------------------- |
+| `contacts`         | Directory of HR recruiters  | `id`, `user_id`, `name`, `company`, `phone`, `phone_key`, `email`, `status`, `followup_date`, `notes`, `deleted_at`        |
+| `calls`            | Chronological log of calls  | `id`, `user_id`, `contact_id`, `outcome`, `notes`, `followup_date`, `called_at`                                            |
+| `job_applications` | Job hunt pipeline           | `id`, `user_id`, `company_name`, `job_title`, `application_status`, `expected_ctc`, `offered_ctc`, `job_url`, `deleted_at` |
+| `activities`       | Scheduled reminders & tasks | `id`, `user_id`, `contact_id`, `activity_type`, `scheduled_at`, `completed`                                                |
 
 ---
 
@@ -374,6 +404,7 @@ SELECT public.log_call(
 ```
 
 This PostgreSQL transaction guarantees that:
+
 1. Contact ownership is verified (`user_id = auth.uid()`).
 2. The call log record is inserted into `calls`.
 3. The contact's `status`, `last_call_at`, and `followup_date` are updated together in a single transaction.
@@ -383,14 +414,17 @@ This PostgreSQL transaction guarantees that:
 ### Phone Normalization & Deduplication Logic
 
 Phone numbers come in many formats:
+
 - `+91 98765-43210`
 - `09876543210`
 - `98765 43210`
 
 PostgreSQL computes a stored generated column:
+
 ```sql
 phone_key text GENERATED ALWAYS AS (RIGHT(REGEXP_REPLACE(phone, '\D', '', 'g'), 10)) STORED
 ```
+
 The unique constraint `UNIQUE(user_id, phone_key)` ensures that a single user cannot accidentally save the same recruiter twice, while allowing two different users to independently track the same recruiter.
 
 ---
@@ -398,6 +432,7 @@ The unique constraint `UNIQUE(user_id, phone_key)` ensures that a single user ca
 ## 📋 Import & Export Format Specifications
 
 ### Contacts CSV Format
+
 When importing or exporting contacts, use the following column headers:
 
 ```csv
@@ -406,6 +441,7 @@ Priya Sharma,Google,+919876543210,priya@google.com,Connected,2026-11-30,2026-12-
 ```
 
 ### Complete JSON Backup Format
+
 ```json
 {
   "version": 1,
@@ -430,7 +466,9 @@ Priya Sharma,Google,+919876543210,priya@google.com,Connected,2026-11-30,2026-12-
 ## ❓ Troubleshooting & FAQ
 
 #### 1. Why do I see "Database table permissions missing. Please run the GRANT permissions SQL"?
+
 This means PostgreSQL table permissions were not granted to the `authenticated` role.
+
 - **Fix**: Open [Supabase SQL Editor](https://supabase.com/dashboard/project/lofzkzwshfazvmwvrjpd/sql/new), paste the grant script from [Step 3](#step-3-run-database-schema--security-grants), and click **Run**.
 
 #### 2. Why do I see "Email confirmation is pending. Please verify your email or disable confirmation in Supabase"?
@@ -445,14 +483,19 @@ By default, Supabase requires users to click an email verification link before l
   3. Click **Save**. All newly registered users can now log in immediately!
 
 #### 2. If a friend forgets their password, can I view it in the Supabase database?
+
 No. Passwords in Supabase are hashed using irreversible `bcrypt` algorithms. Even database administrators cannot see plain passwords.
+
 - **Fix**: To change a user's password, go to **Supabase Dashboard** → **Authentication** → **Users** → click the `...` menu next to the user → click **Send password recovery** or manually set a new password.
 
 #### 3. What if my Supabase project is paused?
+
 Supabase free tier projects pause automatically after **1 week of complete inactivity**.
+
 - **Fix**: Go to the Supabase Dashboard and click **Restore project**. It will wake up in ~1 minute with zero data loss. Logging in once a week keeps it permanently active.
 
 #### 4. Can I import my CSV directly in the Supabase Table Editor?
+
 No. Direct CSV import in the Supabase Table Editor does not assign your user's auth token or `user_id`. Always import using the web application's **Import / Export** page (`/import-export`) or the **Bulk Add** dialog.
 
 ---

@@ -1447,7 +1447,8 @@ tbody tr:last-child td {
   }
 }
 
-.spin-loader {
+.spin-loader,
+.spin {
   animation: spin 0.8s linear infinite;
 }
 

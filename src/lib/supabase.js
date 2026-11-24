@@ -45,9 +45,24 @@ export function formatSupabaseError(error) {
     return 'Invalid username or password. Please check your credentials.';
   }
 
+  // User already registered
+  if (msg.includes('User already registered') || msg.includes('user_already_exists')) {
+    return 'An account with this email already exists. Please sign in or reset your password.';
+  }
+
+  // Duplicate username
+  if (msg.includes('idx_profiles_username_lower') || msg.includes('profiles_username_key')) {
+    return 'This username is already taken. Please choose a different username.';
+  }
+
+  // Rate limiting on auth
+  if (msg.includes('rate limit') || msg.includes('over_email_send_rate_limit')) {
+    return 'Email request rate limit exceeded. Please wait a few minutes before trying again.';
+  }
+
   // Email not confirmed
-  if (msg.includes('Email not confirmed')) {
-    return 'Email confirmation is pending. Please verify your email or disable confirmation in Supabase.';
+  if (msg.includes('Email not confirmed') || msg.includes('email_not_confirmed')) {
+    return 'Email confirmation is pending. Please verify your email inbox or request a new verification email.';
   }
 
   // JWT / Auth expired

@@ -4,26 +4,27 @@ import { useAuth } from '../../context/AuthContext';
 import { useContacts } from '../../context/ContactsContext';
 import { isDueToday, isOverdue } from '../../lib/dates';
 import {
-  PhoneCall,
   LayoutDashboard,
   Users,
   CalendarClock,
   Briefcase,
   FileSpreadsheet,
   Trash2,
+  PhoneCall,
   LogOut,
+  X,
   CheckCircle2,
-  RefreshCw,
   AlertCircle,
-  X
+  RefreshCw,
+  Settings as SettingsIcon
 } from 'lucide-react';
 
 export default function Sidebar({ onItemClick = null, isMobileDrawer = false }) {
-  const { user, username, logout } = useAuth();
+  const { user, username, fullName, role, isHR, logout } = useAuth();
   const { contacts, applications, trashContacts, trashApplications, saveStatus } = useContacts();
   const navigate = useNavigate();
 
-  // Due or overdue count
+  // Due or overdue count (for HR role)
   const dueCount = contacts.filter(
     c => c.followup_date && (isDueToday(c.followup_date) || isOverdue(c.followup_date))
   ).length;
@@ -41,11 +42,16 @@ export default function Sidebar({ onItemClick = null, isMobileDrawer = false }) 
 
   const navLinks = [
     { to: '/', label: 'Dashboard', icon: LayoutDashboard, end: true },
-    { to: '/contacts', label: 'HR Contacts', icon: Users, badge: contacts.length },
-    { to: '/follow-ups', label: 'Follow-ups', icon: CalendarClock, badge: dueCount, badgeClass: dueCount > 0 ? 'due' : 'neutral' },
+    ...(isHR ? [
+      { to: '/contacts', label: 'HR Contacts', icon: Users, badge: contacts.length },
+      { to: '/follow-ups', label: 'Follow-ups', icon: CalendarClock, badge: dueCount, badgeClass: dueCount > 0 ? 'due' : 'neutral' },
+    ] : []),
     { to: '/applications', label: 'Job Applications', icon: Briefcase, badge: applications.length },
-    { to: '/import-export', label: 'Import / Export', icon: FileSpreadsheet },
-    { to: '/trash', label: 'Trash', icon: Trash2, badge: totalTrash > 0 ? totalTrash : null }
+    ...(isHR ? [
+      { to: '/import-export', label: 'Import / Export', icon: FileSpreadsheet },
+    ] : []),
+    { to: '/trash', label: 'Trash', icon: Trash2, badge: totalTrash > 0 ? totalTrash : null },
+    { to: '/settings', label: 'Settings', icon: SettingsIcon }
   ];
 
   return (
@@ -72,7 +78,9 @@ export default function Sidebar({ onItemClick = null, isMobileDrawer = false }) 
       </div>
 
       <nav className="sidebar-nav">
-        <span className="nav-section-title">Workspace</span>
+        <span className="nav-section-title">
+          {isHR ? 'HR CRM Workspace' : 'Job Search Workspace'}
+        </span>
         {navLinks.map((link) => {
           const Icon = link.icon;
           return (
@@ -98,12 +106,12 @@ export default function Sidebar({ onItemClick = null, isMobileDrawer = false }) 
       </nav>
 
       <div className="sidebar-footer">
-        {/* Sync status */}
-        <div className={`sync-status-indicator ${saveStatus}`}>
+        {/* Sync Indicator */}
+        <div className={`sync-status-indicator ${saveStatus}`} style={{ marginBottom: '10px' }}>
           {saveStatus === 'saving' && (
             <>
-              <RefreshCw size={12} className="spin-loader" />
-              <span>Syncing…</span>
+              <RefreshCw size={12} className="spin" />
+              <span>Saving changes…</span>
             </>
           )}
           {saveStatus === 'saved' && (
@@ -128,15 +136,25 @@ export default function Sidebar({ onItemClick = null, isMobileDrawer = false }) 
 
         {/* User profile row */}
         <div className="user-profile-row">
-          <div className="user-info-box" title={user?.email || username}>
+          <NavLink
+            to="/settings"
+            className="user-info-box"
+            onClick={onItemClick}
+            style={{ textDecoration: 'none', color: 'inherit', flex: 1, minWidth: 0 }}
+            title="Account Settings"
+          >
             <div className="avatar-circle">
               {username.charAt(0).toUpperCase()}
             </div>
             <div className="user-meta-text">
-              <div className="user-meta-name">{username}</div>
-              <div className="user-meta-role">Active Account</div>
+              <div className="user-meta-name" style={{ textOverflow: 'ellipsis', overflow: 'hidden', whiteSpace: 'nowrap' }}>
+                {fullName || username}
+              </div>
+              <div className="user-meta-role">
+                {isHR ? 'HR Recruiter' : 'Job Seeker'}
+              </div>
             </div>
-          </div>
+          </NavLink>
 
           <button
             type="button"
