@@ -91,7 +91,7 @@ export default function Login() {
             Job Tracker
           </h2>
           <p style={{ fontSize: '13px', color: '#64748b', marginTop: '2px' }}>
-            {mode === 'login' && 'Sign in to access your CRM'}
+            {mode === 'login' && 'Sign in to your account'}
             {mode === 'register' && 'Create your tracker account'}
             {mode === 'forgot' && 'Reset your account password'}
           </p>

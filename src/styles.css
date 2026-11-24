@@ -62,9 +62,9 @@
 
   /* Font & Dimensions */
   --font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-  --sidebar-width: 250px;
-  --topbar-height: 56px;
-  --bottombar-height: 60px;
+  --sidebar-width: 240px;
+  --topbar-height: 54px;
+  --bottombar-height: 58px;
 }
 
 /* ==============================================================================
@@ -88,6 +88,7 @@ body {
   line-height: 1.5;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  -webkit-tap-highlight-color: transparent;
   overflow-x: hidden;
 }
 
@@ -133,7 +134,7 @@ a:hover {
 
 .sidebar-header {
   height: var(--topbar-height);
-  padding: 0 18px;
+  padding: 0 16px;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -143,16 +144,16 @@ a:hover {
 .brand-link {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 9px;
   text-decoration: none;
   color: var(--text-main);
 }
 
 .brand-icon-box {
-  width: 32px;
-  height: 32px;
-  border-radius: var(--radius-sm);
-  background: var(--primary);
+  width: 30px;
+  height: 30px;
+  border-radius: 8px;
+  background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
   color: #ffffff;
   display: flex;
   align-items: center;
@@ -161,24 +162,17 @@ a:hover {
   flex-shrink: 0;
 }
 
-.brand-meta h1 {
-  font-size: 14.5px;
+.brand-title {
+  font-size: 15px;
   font-weight: 700;
-  letter-spacing: -0.02em;
+  letter-spacing: -0.025em;
   color: var(--text-main);
-  line-height: 1.2;
-}
-
-.brand-meta span {
-  font-size: 11px;
-  color: var(--text-muted);
-  font-weight: 500;
-  display: block;
+  line-height: 1;
 }
 
 .sidebar-nav {
   flex: 1;
-  padding: 16px 10px;
+  padding: 14px 10px;
   overflow-y: auto;
   display: flex;
   flex-direction: column;
@@ -191,7 +185,7 @@ a:hover {
   text-transform: uppercase;
   letter-spacing: 0.05em;
   color: var(--text-faint);
-  padding: 10px 10px 4px;
+  padding: 8px 10px 4px;
 }
 
 .sidebar-link {
@@ -268,18 +262,18 @@ a:hover {
 .user-info-box {
   display: flex;
   align-items: center;
-  gap: 9px;
+  gap: 8px;
   overflow: hidden;
 }
 
 .avatar-circle {
-  width: 30px;
-  height: 30px;
+  width: 28px;
+  height: 28px;
   border-radius: var(--radius-full);
   background: #1e293b;
   color: #ffffff;
   font-weight: 700;
-  font-size: 12px;
+  font-size: 11.5px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -294,13 +288,13 @@ a:hover {
 
 .user-meta-name {
   font-weight: 600;
-  font-size: 13px;
+  font-size: 12.5px;
   color: var(--text-main);
   line-height: 1.2;
 }
 
 .user-meta-role {
-  font-size: 11px;
+  font-size: 10.5px;
   color: var(--text-muted);
 }
 
@@ -308,9 +302,9 @@ a:hover {
   display: flex;
   align-items: center;
   gap: 6px;
-  font-size: 11.5px;
+  font-size: 11px;
   font-weight: 500;
-  padding: 4px 8px;
+  padding: 3px 8px;
   border-radius: var(--radius-sm);
   background: var(--bg-subtle);
 }
@@ -357,7 +351,7 @@ a:hover {
 }
 
 .page-breadcrumb {
-  font-size: 14px;
+  font-size: 13.5px;
   font-weight: 600;
   color: var(--text-main);
 }
@@ -370,7 +364,7 @@ a:hover {
 
 .page-content-wrapper {
   flex: 1;
-  padding: 24px 28px 48px;
+  padding: 22px 28px 48px;
   max-width: 1400px;
   width: 100%;
   margin: 0 auto;
@@ -384,7 +378,7 @@ a:hover {
   align-items: center;
   justify-content: center;
   gap: 6px;
-  padding: 7px 12px;
+  padding: 6px 12px;
   font-size: 13px;
   font-weight: 500;
   border-radius: var(--radius-sm);
@@ -406,7 +400,7 @@ a:hover {
 }
 
 .btn:active {
-  transform: translateY(1px);
+  transform: scale(0.98);
 }
 
 .btn:focus-visible {
@@ -415,15 +409,15 @@ a:hover {
 }
 
 .btn-primary {
-  background: var(--primary);
-  border-color: var(--primary);
+  background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+  border-color: #1d4ed8;
   color: #ffffff;
-  box-shadow: 0 1px 2px rgba(37, 99, 235, 0.2);
+  box-shadow: 0 1px 3px rgba(37, 99, 235, 0.25);
 }
 
 .btn-primary:hover {
-  background: var(--primary-hover);
-  border-color: var(--primary-hover);
+  background: #1d4ed8;
+  border-color: #1e40af;
   color: #ffffff;
 }
 
@@ -560,7 +554,7 @@ textarea {
 }
 
 /* ==============================================================================
-   METRIC CARDS GRID (Linear-inspired crisp stat cards)
+   METRIC CARDS GRID (Sleek SaaS Cards with Subtle Accent Bars)
    ============================================================================== */
 .metrics-row {
   display: grid;
@@ -586,6 +580,13 @@ textarea {
   border-color: #cbd5e1;
   box-shadow: var(--shadow-sm);
 }
+
+/* Linear-style Colored Accent Top Bar */
+.metric-card.blue::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; background: #2563eb; }
+.metric-card.emerald::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; background: #059669; }
+.metric-card.amber::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; background: #d97706; }
+.metric-card.red::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; background: #dc2626; }
+.metric-card.purple::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; background: #7c3aed; }
 
 .metric-card-top {
   display: flex;
@@ -641,7 +642,7 @@ textarea {
 .metric-card.purple .metric-card-value { color: var(--text-main); }
 
 /* ==============================================================================
-   PANELS & SECTIONS (Notion/Linear card containers)
+   PANELS & SECTIONS
    ============================================================================== */
 .panel {
   background: var(--bg-card);
@@ -734,7 +735,6 @@ textarea {
   -webkit-overflow-scrolling: touch;
 }
 
-/* Hide scrollbar on chip bar */
 .filter-chips-bar::-webkit-scrollbar {
   display: none;
 }
@@ -830,15 +830,20 @@ tbody tr:last-child td {
 
 .phone-action-link {
   color: var(--primary);
-  font-weight: 500;
+  font-weight: 600;
   display: inline-flex;
   align-items: center;
   gap: 5px;
   font-size: 13px;
+  background: var(--primary-subtle);
+  padding: 3px 8px;
+  border-radius: 6px;
+  border: 1px solid var(--primary-border);
 }
 
 .phone-action-link:hover {
-  text-decoration: underline;
+  background: #dbeafe;
+  text-decoration: none;
 }
 
 .due-indicator {
@@ -866,7 +871,7 @@ tbody tr:last-child td {
 }
 
 /* ==============================================================================
-   STATUS PILLS / BADGES (Modern subtle ring styling)
+   STATUS PILLS / BADGES
    ============================================================================== */
 .status-pill {
   display: inline-flex;
@@ -888,7 +893,7 @@ tbody tr:last-child td {
 }
 
 /* ==============================================================================
-   MODALS & DIALOGS (Notion/Linear centered card design)
+   MODALS & DIALOGS
    ============================================================================== */
 .modal-overlay {
   position: fixed;
@@ -1100,7 +1105,7 @@ tbody tr:last-child td {
 }
 
 /* ==============================================================================
-   MOBILE CARDS LIST (Converts wide tables to beautiful mobile touch cards)
+   MOBILE CARDS LIST
    ============================================================================== */
 .mobile-card-stack {
   display: none;
@@ -1226,7 +1231,7 @@ tbody tr:last-child td {
 }
 
 /* ==============================================================================
-   MOBILE NAVIGATION (Header, Bottom Nav & Slide Drawer)
+   MOBILE NAVIGATION
    ============================================================================== */
 .mobile-topbar {
   display: none;
@@ -1281,12 +1286,13 @@ tbody tr:last-child td {
 
 .mobile-bottom-link.active svg {
   color: var(--primary);
+  transform: translateY(-1px);
 }
 
 .mobile-bottom-badge {
   position: absolute;
   top: 4px;
-  right: 8px;
+  right: 12px;
   width: 6px;
   height: 6px;
   background: var(--danger);
@@ -1319,31 +1325,42 @@ tbody tr:last-child td {
 }
 
 /* ==============================================================================
-   RESPONSIVE BREAKPOINTS (Desktop, Tablet, Mobile)
+   RESPONSIVE BREAKPOINTS
    ============================================================================== */
 @media (max-width: 1024px) {
+  .app-layout {
+    flex-direction: column;
+    min-height: 100vh;
+    width: 100%;
+  }
   .desktop-sidebar {
     display: none;
   }
   .app-main {
     margin-left: 0;
     width: 100%;
-    padding-bottom: calc(var(--bottombar-height) + 12px);
+    padding-bottom: calc(var(--bottombar-height) + 16px);
   }
   .mobile-topbar {
     display: flex;
+    position: sticky;
+    top: 0;
+    left: 0;
+    right: 0;
+    width: 100%;
+    z-index: 90;
   }
   .mobile-bottom-nav {
     display: flex;
   }
   .top-header {
-    display: none; /* Hide redundant secondary topbar on mobile to save vertical space */
+    display: none;
   }
   .mobile-drawer-backdrop.open {
     display: block;
   }
   .page-content-wrapper {
-    padding: 14px 14px 60px;
+    padding: 12px 12px 64px;
   }
 }
 
@@ -1378,9 +1395,8 @@ tbody tr:last-child td {
     max-height: 94vh;
   }
   .btn {
-    min-height: 42px; /* Minimum mobile touch target */
+    min-height: 42px;
   }
-  /* Prevent iOS Safari from auto-zooming inputs under 16px */
   input, select, textarea {
     font-size: 16px !important;
   }
@@ -1407,7 +1423,6 @@ tbody tr:last-child td {
   }
 }
 
-/* Animations */
 .spin-loader {
   animation: spin 0.8s linear infinite;
 }

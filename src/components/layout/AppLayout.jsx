@@ -7,7 +7,6 @@ import { isDueToday, isOverdue } from '../../lib/dates';
 import {
   PhoneCall,
   Menu,
-  X,
   LayoutDashboard,
   Users,
   CalendarClock,
@@ -46,40 +45,39 @@ export default function AppLayout({ children }) {
         <Sidebar />
       </aside>
 
-      {/* Mobile Top Navigation Header */}
+      {/* Mobile Top Header (Fixed 54px) */}
       <div className="mobile-topbar">
         <NavLink to="/" className="brand-link" style={{ textDecoration: 'none' }}>
           <div className="brand-icon-box" style={{ width: '28px', height: '28px' }}>
-            <PhoneCall size={15} />
+            <PhoneCall size={14} />
           </div>
-          <span style={{ fontWeight: 700, fontSize: '14.5px', color: '#0f172a' }}>Job Tracker</span>
+          <span className="brand-title" style={{ fontSize: '15px' }}>Job Tracker</span>
         </NavLink>
 
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
           <span style={{
             fontSize: '11px',
             fontWeight: 600,
-            background: '#f1f5f9',
+            background: 'rgba(37, 99, 235, 0.08)',
+            color: '#2563eb',
             padding: '2px 8px',
-            borderRadius: '9999px',
-            color: '#475569'
+            borderRadius: '9999px'
           }}>
             {getPageTitle(location.pathname)}
           </span>
 
           <button
             type="button"
-            className="btn btn-sm btn-ghost"
+            className="btn btn-sm btn-ghost btn-icon"
             onClick={() => setMobileDrawerOpen(true)}
             aria-label="Open Navigation Menu"
-            style={{ padding: '6px' }}
           >
             <Menu size={19} />
           </button>
         </div>
       </div>
 
-      {/* Mobile Slide Drawer Backdrop & Panel */}
+      {/* Mobile Slide Drawer (Single, unified header without duplication) */}
       <div
         className={`mobile-drawer-backdrop ${mobileDrawerOpen ? 'open' : ''}`}
         onClick={closeDrawer}
@@ -88,37 +86,13 @@ export default function AppLayout({ children }) {
           className="mobile-drawer-panel"
           onClick={(e) => e.stopPropagation()}
         >
-          <div style={{
-            height: '56px',
-            padding: '0 16px',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            borderBottom: '1px solid #e2e8f0'
-          }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-              <div className="brand-icon-box" style={{ width: '28px', height: '28px' }}>
-                <PhoneCall size={15} />
-              </div>
-              <span style={{ fontWeight: 700, fontSize: '14.5px' }}>Job Tracker</span>
-            </div>
-            <button
-              type="button"
-              className="btn btn-sm btn-ghost"
-              onClick={closeDrawer}
-              aria-label="Close Navigation"
-            >
-              <X size={18} />
-            </button>
-          </div>
-
-          <Sidebar onItemClick={closeDrawer} />
+          <Sidebar onItemClick={closeDrawer} isMobileDrawer={true} />
         </div>
       </div>
 
       {/* Main Page Area */}
       <div className="app-main">
-        {/* Desktop Top Header (hidden on mobile) */}
+        {/* Desktop Top Breadcrumb Header (Hidden on mobile) */}
         <header className="top-header">
           <div className="top-header-left">
             <span className="page-breadcrumb">{getPageTitle(location.pathname)}</span>
@@ -138,7 +112,7 @@ export default function AppLayout({ children }) {
         </main>
       </div>
 
-      {/* Native-feel Mobile Bottom Navigation Bar (Screens < 1024px) */}
+      {/* Mobile Bottom Navigation Bar (< 1024px) */}
       <nav className="mobile-bottom-nav">
         <NavLink
           to="/"

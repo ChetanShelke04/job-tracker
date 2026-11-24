@@ -14,10 +14,11 @@ import {
   LogOut,
   CheckCircle2,
   RefreshCw,
-  AlertCircle
+  AlertCircle,
+  X
 } from 'lucide-react';
 
-export default function Sidebar({ onItemClick = null }) {
+export default function Sidebar({ onItemClick = null, isMobileDrawer = false }) {
   const { user, username, logout } = useAuth();
   const { contacts, applications, trashContacts, trashApplications, saveStatus } = useContacts();
   const navigate = useNavigate();
@@ -52,17 +53,26 @@ export default function Sidebar({ onItemClick = null }) {
       <div className="sidebar-header">
         <NavLink to="/" className="brand-link" onClick={onItemClick}>
           <div className="brand-icon-box">
-            <PhoneCall size={18} />
+            <PhoneCall size={17} />
           </div>
-          <div className="brand-meta">
-            <h1>Job Tracker</h1>
-            <span>Personal CRM</span>
-          </div>
+          <span className="brand-title">Job Tracker</span>
         </NavLink>
+
+        {isMobileDrawer && (
+          <button
+            type="button"
+            className="btn btn-sm btn-icon btn-ghost"
+            onClick={onItemClick}
+            aria-label="Close Navigation"
+            style={{ padding: '6px' }}
+          >
+            <X size={18} />
+          </button>
+        )}
       </div>
 
       <nav className="sidebar-nav">
-        <span className="nav-section-title">Navigation</span>
+        <span className="nav-section-title">Workspace</span>
         {navLinks.map((link) => {
           const Icon = link.icon;
           return (
@@ -111,7 +121,7 @@ export default function Sidebar({ onItemClick = null }) {
           {saveStatus === 'idle' && (
             <>
               <CheckCircle2 size={12} style={{ opacity: 0.6 }} />
-              <span>Connected to cloud</span>
+              <span>Cloud connected</span>
             </>
           )}
         </div>
@@ -124,7 +134,7 @@ export default function Sidebar({ onItemClick = null }) {
             </div>
             <div className="user-meta-text">
               <div className="user-meta-name">{username}</div>
-              <div className="user-meta-role">Job Seeker</div>
+              <div className="user-meta-role">Active Account</div>
             </div>
           </div>
 
@@ -142,4 +152,3 @@ export default function Sidebar({ onItemClick = null }) {
     </>
   );
 }
-
