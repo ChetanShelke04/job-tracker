@@ -20,7 +20,8 @@ import {
   FileSpreadsheet,
   Download,
   AlertTriangle,
-  RotateCcw
+  RotateCcw,
+  Clock
 } from 'lucide-react';
 
 export default function Contacts() {
@@ -31,9 +32,8 @@ export default function Contacts() {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedStatus, setSelectedStatus] = useState('ALL');
   const [selectedCompany, setSelectedCompany] = useState('ALL');
-  const [sortOption, setSortOption] = useState('overdue_first'); // 'overdue_first' | 'created_desc' | 'name_asc' | 'company_asc'
+  const [sortOption, setSortOption] = useState('overdue_first');
 
-  // URL query parameter filter support (e.g. ?filter=due, ?filter=never-called, ?filter=interviews)
   const chipParam = searchParams.get('filter') || 'all';
 
   // Modals state
@@ -45,7 +45,7 @@ export default function Contacts() {
   const [historyModalOpen, setHistoryModalOpen] = useState(false);
   const [activeHistoryContact, setActiveHistoryContact] = useState(null);
 
-  // Distinct list of companies for filter dropdown
+  // Distinct list of companies
   const companies = useMemo(() => {
     const set = new Set();
     contacts.forEach(c => {
@@ -58,7 +58,7 @@ export default function Contacts() {
   const filteredContacts = useMemo(() => {
     let result = [...contacts];
 
-    // 1. Text Search (name, company, phone, notes)
+    // 1. Text Search
     if (searchQuery.trim()) {
       const q = searchQuery.toLowerCase();
       result = result.filter(c =>
@@ -70,12 +70,12 @@ export default function Contacts() {
       );
     }
 
-    // 2. Status Dropdown Filter
+    // 2. Status Dropdown
     if (selectedStatus !== 'ALL') {
       result = result.filter(c => c.status === selectedStatus);
     }
 
-    // 3. Company Dropdown Filter
+    // 3. Company Dropdown
     if (selectedCompany !== 'ALL') {
       result = result.filter(c => c.company === selectedCompany);
     }
@@ -177,55 +177,65 @@ export default function Contacts() {
 
   return (
     <div>
-      {/* Page Header */}
-      <div className="page-header">
-        <div className="page-title">
-          <h2>HR & Recruiter Contacts</h2>
+      {/* Banner */}
+      <div className="page-title-banner">
+        <div>
+          <h2>HR & Recruiter Directory</h2>
           <p>
             Showing {filteredContacts.length} of {contacts.length} total contacts
           </p>
         </div>
-        <div className="header-actions">
-          <button className="btn" onClick={handleExportCsv} title="Export current list to CSV">
-            <Download size={15} />
+        <div className="page-banner-actions">
+          <button
+            type="button"
+            className="btn btn-sm"
+            onClick={handleExportCsv}
+            title="Export contacts to CSV"
+          >
+            <Download size={14} />
             <span>Export CSV</span>
           </button>
-          <button className="btn" onClick={() => setBulkModalOpen(true)}>
-            <FileSpreadsheet size={15} />
+          <button
+            type="button"
+            className="btn btn-sm"
+            onClick={() => setBulkModalOpen(true)}
+          >
+            <FileSpreadsheet size={14} />
             <span>Bulk Add</span>
           </button>
           <button
-            className="btn btn-primary"
+            type="button"
+            className="btn btn-sm btn-primary"
             onClick={() => {
               setContactToEdit(null);
               setContactModalOpen(true);
             }}
           >
-            <Plus size={15} />
+            <Plus size={14} />
             <span>Add Contact</span>
           </button>
         </div>
       </div>
 
-      {/* Main Panel */}
+      {/* Main CRM Panel */}
       <section className="panel">
-        {/* Toolbar with Search, Status, Company & Sort */}
-        <div className="toolbar">
-          <div className="search-box">
-            <Search size={16} />
+        {/* Toolbar */}
+        <div className="crm-toolbar">
+          <div className="search-input-wrap">
+            <Search size={15} />
             <input
               type="text"
-              placeholder="Search by name, company, phone or notes…"
+              placeholder="Search by name, company, phone, notes…"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
             />
           </div>
 
           <select
-            className="filter-select"
+            className="toolbar-select"
             value={selectedStatus}
             onChange={(e) => setSelectedStatus(e.target.value)}
-            aria-label="Filter by Status"
+            aria-label="Filter status"
           >
             <option value="ALL">All Statuses</option>
             {STATUSES.map(s => (
@@ -234,10 +244,10 @@ export default function Contacts() {
           </select>
 
           <select
-            className="filter-select"
+            className="toolbar-select"
             value={selectedCompany}
             onChange={(e) => setSelectedCompany(e.target.value)}
-            aria-label="Filter by Company"
+            aria-label="Filter company"
           >
             <option value="ALL">All Companies ({companies.length})</option>
             {companies.map(c => (
@@ -246,7 +256,7 @@ export default function Contacts() {
           </select>
 
           <select
-            className="filter-select"
+            className="toolbar-select"
             value={sortOption}
             onChange={(e) => setSortOption(e.target.value)}
             aria-label="Sort order"
@@ -258,7 +268,12 @@ export default function Contacts() {
           </select>
 
           {(searchQuery || selectedStatus !== 'ALL' || selectedCompany !== 'ALL' || chipParam !== 'all') && (
-            <button className="btn btn-sm" onClick={handleClearFilters}>
+            <button
+              type="button"
+              className="btn btn-sm btn-ghost"
+              onClick={handleClearFilters}
+              title="Reset all filters"
+            >
               <RotateCcw size={12} />
               <span>Clear</span>
             </button>
@@ -266,39 +281,45 @@ export default function Contacts() {
         </div>
 
         {/* Filter Chips Bar */}
-        <div className="chips-bar">
+        <div className="filter-chips-bar">
           <button
-            className={`chip ${chipParam === 'all' ? 'active' : ''}`}
+            type="button"
+            className={`filter-chip ${chipParam === 'all' ? 'active' : ''}`}
             onClick={() => handleChipChange('all')}
           >
             All Contacts
           </button>
           <button
-            className={`chip ${chipParam === 'due' ? 'active' : ''}`}
+            type="button"
+            className={`filter-chip ${chipParam === 'due' ? 'active' : ''}`}
             onClick={() => handleChipChange('due')}
           >
             Follow-ups Due
           </button>
           <button
-            className={`chip ${chipParam === 'never-called' ? 'active' : ''}`}
+            type="button"
+            className={`filter-chip ${chipParam === 'never-called' ? 'active' : ''}`}
             onClick={() => handleChipChange('never-called')}
           >
             Never Called
           </button>
           <button
-            className={`chip ${chipParam === 'connected' ? 'active' : ''}`}
+            type="button"
+            className={`filter-chip ${chipParam === 'connected' ? 'active' : ''}`}
             onClick={() => handleChipChange('connected')}
           >
             Connected
           </button>
           <button
-            className={`chip ${chipParam === 'interviews' ? 'active' : ''}`}
+            type="button"
+            className={`filter-chip ${chipParam === 'interviews' ? 'active' : ''}`}
             onClick={() => handleChipChange('interviews')}
           >
             Interviews
           </button>
           <button
-            className={`chip ${chipParam === 'dnc' ? 'active' : ''}`}
+            type="button"
+            className={`filter-chip ${chipParam === 'dnc' ? 'active' : ''}`}
             onClick={() => handleChipChange('dnc')}
           >
             Do Not Contact
@@ -306,13 +327,13 @@ export default function Contacts() {
         </div>
 
         {/* Desktop Table View */}
-        <div className="table-container table-desktop-only">
+        <div className="table-container desktop-table-view">
           <table>
             <thead>
               <tr>
                 <th style={{ width: '40px' }}>#</th>
                 <th>HR Name & Company</th>
-                <th>Phone Number</th>
+                <th>Phone</th>
                 <th>Status</th>
                 <th>Last Call</th>
                 <th>Next Follow-up</th>
@@ -329,24 +350,24 @@ export default function Contacts() {
                   <tr key={c.id}>
                     <td style={{ color: '#94a3b8', fontSize: '12px' }}>{index + 1}</td>
                     <td>
-                      <div className="contact-name">{c.name}</div>
-                      <div className="company-sub">{c.company}</div>
+                      <div className="table-cell-name">{c.name}</div>
+                      <div className="table-cell-sub">{c.company}</div>
                     </td>
                     <td>
-                      <a href={`tel:${c.phone}`} className="phone-link">
-                        <Phone size={13} />
+                      <a href={`tel:${c.phone}`} className="phone-action-link">
+                        <Phone size={12} />
                         <span>{c.phone}</span>
                       </a>
                     </td>
                     <td>
                       <StatusBadge status={c.status} />
                     </td>
-                    <td style={{ fontSize: '12px', color: '#66748b' }}>
+                    <td style={{ fontSize: '12px', color: '#64748b' }}>
                       {formatDate(c.last_call_at)}
                     </td>
                     <td>
                       {c.followup_date ? (
-                        <span className={overdue ? 'due-badge' : dueToday ? 'today-badge' : ''}>
+                        <span className={overdue ? 'due-indicator' : dueToday ? 'today-indicator' : ''}>
                           {overdue && <AlertTriangle size={12} />}
                           {formatDate(c.followup_date)}
                           {overdue && ' (Due)'}
@@ -359,30 +380,34 @@ export default function Contacts() {
                       {c.next_action || '—'}
                     </td>
                     <td>
-                      <div className="table-actions" style={{ justifyContent: 'flex-end' }}>
+                      <div className="row-actions-group" style={{ justifyContent: 'flex-end' }}>
                         <button
+                          type="button"
                           className="btn btn-sm btn-primary"
                           onClick={() => handleOpenCall(c)}
-                          title="Log Call"
+                          title="Log Call Outcome"
                         >
-                          <PhoneCall size={13} />
+                          <PhoneCall size={12} />
                           <span>Call</span>
                         </button>
                         <button
-                          className="btn btn-sm btn-icon"
+                          type="button"
+                          className="btn btn-sm btn-icon btn-ghost"
                           onClick={() => handleOpenHistory(c)}
                           title="Call History"
                         >
                           <History size={14} />
                         </button>
                         <button
-                          className="btn btn-sm btn-icon"
+                          type="button"
+                          className="btn btn-sm btn-icon btn-ghost"
                           onClick={() => handleOpenEdit(c)}
                           title="Edit Contact"
                         >
                           <Edit2 size={14} />
                         </button>
                         <button
+                          type="button"
                           className="btn btn-sm btn-icon btn-danger"
                           onClick={() => handleDelete(c)}
                           title="Move to Trash"
@@ -398,69 +423,75 @@ export default function Contacts() {
           </table>
         </div>
 
-        {/* Mobile Cards View */}
-        <div className="mobile-cards-list">
+        {/* Mobile Touch Cards View (Touch-optimized, min 44px buttons, zero horizontal scroll) */}
+        <div className="mobile-card-stack">
           {filteredContacts.map(c => {
             const overdue = isOverdue(c.followup_date);
+            const dueToday = isDueToday(c.followup_date);
+
             return (
-              <div key={c.id} className="contact-card-mobile">
-                <div className="contact-card-top">
+              <div key={c.id} className="crm-mobile-card">
+                <div className="mobile-card-header">
                   <div>
-                    <div className="contact-name" style={{ fontSize: '15px' }}>{c.name}</div>
-                    <div className="company-sub" style={{ fontSize: '13px' }}>{c.company}</div>
+                    <div className="mobile-card-title">{c.name}</div>
+                    <div className="mobile-card-sub">{c.company}</div>
                   </div>
                   <StatusBadge status={c.status} />
                 </div>
 
-                <div className="contact-card-phone">
-                  <a href={`tel:${c.phone}`} className="phone-link" style={{ fontSize: '14px' }}>
+                <div className="mobile-card-phone-row">
+                  <a href={`tel:${c.phone}`} className="phone-action-link" style={{ fontSize: '14px' }}>
                     <Phone size={14} />
                     <span>{c.phone}</span>
                   </a>
                 </div>
 
-                <div className="contact-card-details">
+                <div className="mobile-card-metadata">
                   <div>
-                    <span style={{ color: '#66748b' }}>Follow-up: </span>
-                    <span className={overdue ? 'due-badge' : ''}>
+                    <span style={{ color: '#64748b' }}>Follow-up: </span>
+                    <span className={overdue ? 'due-indicator' : dueToday ? 'today-indicator' : ''}>
                       {formatDate(c.followup_date)}
                     </span>
                   </div>
                   <div>
-                    <span style={{ color: '#66748b' }}>Action: </span>
+                    <span style={{ color: '#64748b' }}>Action: </span>
                     <span>{c.next_action || '—'}</span>
                   </div>
                 </div>
 
-                <div className="contact-card-actions">
+                <div className="mobile-card-actions">
                   <button
-                    className="btn btn-sm btn-primary"
+                    type="button"
+                    className="btn btn-primary"
                     style={{ flex: 1 }}
                     onClick={() => handleOpenCall(c)}
                   >
-                    <PhoneCall size={13} />
+                    <PhoneCall size={14} />
                     <span>Log Call</span>
                   </button>
                   <button
-                    className="btn btn-sm btn-icon"
+                    type="button"
+                    className="btn btn-icon"
                     onClick={() => handleOpenHistory(c)}
                     title="History"
                   >
-                    <History size={14} />
+                    <History size={15} />
                   </button>
                   <button
-                    className="btn btn-sm btn-icon"
+                    type="button"
+                    className="btn btn-icon"
                     onClick={() => handleOpenEdit(c)}
                     title="Edit"
                   >
-                    <Edit2 size={14} />
+                    <Edit2 size={15} />
                   </button>
                   <button
-                    className="btn btn-sm btn-icon btn-danger"
+                    type="button"
+                    className="btn btn-icon btn-danger"
                     onClick={() => handleDelete(c)}
                     title="Delete"
                   >
-                    <Trash2 size={14} />
+                    <Trash2 size={15} />
                   </button>
                 </div>
               </div>
@@ -470,12 +501,12 @@ export default function Contacts() {
 
         {/* Empty State */}
         {filteredContacts.length === 0 && (
-          <div className="empty-state">
-            <span className="empty-icon">🔍</span>
+          <div className="empty-view-state">
+            <div className="empty-view-icon">🔍</div>
             <h4>No contacts match your filters</h4>
-            <p>Try clearing filters or add new HR recruiter contacts.</p>
-            <button className="btn btn-primary" onClick={handleClearFilters}>
-              Clear All Filters
+            <p>Try clearing your search query or status filter.</p>
+            <button type="button" className="btn btn-sm btn-primary" onClick={handleClearFilters}>
+              Reset Filters
             </button>
           </div>
         )}
@@ -517,4 +548,3 @@ export default function Contacts() {
     </div>
   );
 }
-

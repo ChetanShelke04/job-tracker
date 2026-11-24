@@ -8,7 +8,7 @@ export default function Toast() {
   if (!toasts || toasts.length === 0) return null;
 
   return (
-    <div className="toast-container" aria-live="polite">
+    <div className="toast-shelf" aria-live="polite">
       {toasts.map(toast => {
         let IconComponent = Info;
         let toastClass = '';
@@ -22,7 +22,7 @@ export default function Toast() {
         }
 
         return (
-          <div key={toast.id} className={`toast ${toastClass}`}>
+          <div key={toast.id} className={`toast-item ${toastClass}`}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
               <IconComponent size={16} />
               <span>{toast.message}</span>
@@ -32,7 +32,7 @@ export default function Toast() {
               {toast.undoAction && (
                 <button
                   type="button"
-                  className="toast-undo-btn"
+                  className="toast-undo-action"
                   onClick={() => {
                     toast.undoAction();
                     removeToast(toast.id);
@@ -51,7 +51,8 @@ export default function Toast() {
                   opacity: 0.8,
                   cursor: 'pointer',
                   display: 'flex',
-                  alignItems: 'center'
+                  alignItems: 'center',
+                  padding: 0
                 }}
                 aria-label="Dismiss"
               >
@@ -64,4 +65,3 @@ export default function Toast() {
     </div>
   );
 }
-

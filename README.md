@@ -18,7 +18,7 @@ Engineered to run forever at **₹0 total cost** within the permanent free tiers
    - Persistent session with automatic token refresh.
 3. **Comprehensive HR Contact Management**:
    - Live search across HR name, company, phone number, and discussion notes.
-   - Status tracking: *Not Called*, *No Answer*, *Busy — Call Later*, *Connected*, *Resume Requested*, *Opportunity Shared*, *Interview Scheduled*, *Follow Up Needed*, *Waiting for HR Response*, *Not Hiring*, *Rejected*, *Do Not Contact*.
+   - Status tracking: _Not Called_, _No Answer_, _Busy — Call Later_, _Connected_, _Resume Requested_, _Opportunity Shared_, _Interview Scheduled_, _Follow Up Needed_, _Waiting for HR Response_, _Not Hiring_, _Rejected_, _Do Not Contact_.
    - Clickable `tel:` and `mailto:` links with responsive tap targets for mobile phones.
    - Duplicate prevention based on normalized 10-digit phone numbers (`phone_key`).
    - Soft deletion with instant **Undo Toast**, plus a dedicated **Trash** view to restore or permanently delete records.
@@ -60,17 +60,20 @@ Engineered to run forever at **₹0 total cost** within the permanent free tiers
 Follow these exact steps to set up the project and deploy it for free.
 
 ### Step 1: Create a Free Supabase Project
+
 1. Go to [supabase.com](https://supabase.com) and sign in (or create a free account).
-2. Click **"New Project"**, choose an organization, give your project a name (e.g. `job-tracker`), set a secure database password, and select the region nearest to you (e.g., *Central India (Mumbai)*).
+2. Click **"New Project"**, choose an organization, give your project a name (e.g. `job-tracker`), set a secure database password, and select the region nearest to you (e.g., _Central India (Mumbai)_).
 3. Click **"Create new project"** and wait ~2 minutes for the database to provision.
 
 ### Step 2: Run the Database Schema Migration
+
 1. In your Supabase project dashboard, open the left sidebar and click **"SQL Editor"** (icon with `>_`).
 2. Click **"New query"**.
 3. Open the file `supabase/schema.sql` from this repository, copy its entire contents, paste them into the SQL Editor, and click **"Run"** (green button).
 4. Verify that you see `Success. No rows returned`. All 4 tables (`contacts`, `calls`, `job_applications`, `activities`), indexes, RLS policies, and the `log_call` function are now active.
 
 ### Step 3: Configure Authentication Settings & Create Users
+
 1. In the Supabase left sidebar, click **"Authentication"** -> **"Providers"** -> **"Email"**.
 2. **Turn OFF** "Allow new users to sign up" (disables public signups so only authorized users can log in).
 3. **Turn OFF** "Confirm email" (allows users to log in immediately without waiting for verification emails).
@@ -80,15 +83,17 @@ Follow these exact steps to set up the project and deploy it for free.
    - User 1: `chetan@jobtracker.app` + choose a strong password. (Toggle "Auto Confirm User?" to ON).
    - User 2: `friend1@jobtracker.app` + choose a strong password. (Auto Confirm ON).
    - User 3: `friend2@jobtracker.app` + choose a strong password. (Auto Confirm ON).
-7. *Note:* When logging into the app, users only type their username (e.g. `chetan`) and password!
+7. _Note:_ When logging into the app, users only type their username (e.g. `chetan`) and password!
 
 ### Step 4: Get Your Supabase API Keys
+
 1. In Supabase, go to **"Project Settings"** (gear icon) -> **"API"**.
 2. Copy the **Project URL** (e.g. `https://xyzcompany.supabase.co`).
-3. Copy the **anon / public key** (the long string under *Project API keys*).
-4. *Important:* Never use or expose the `service_role` key. The frontend only uses the `anon` public key protected by PostgreSQL RLS.
+3. Copy the **anon / public key** (the long string under _Project API keys_).
+4. _Important:_ Never use or expose the `service_role` key. The frontend only uses the `anon` public key protected by PostgreSQL RLS.
 
 ### Step 5: Test Locally
+
 1. In your terminal, navigate to the `job-tracker` folder:
    ```bash
    cd /Users/chetanramshelke/Documents/React_Project/job-tracker
@@ -111,6 +116,7 @@ Follow these exact steps to set up the project and deploy it for free.
 6. Log in with `chetan` and the password you set in Step 3.
 
 ### Step 6: Push to GitHub & Deploy on Vercel
+
 1. Initialize git and commit your files:
    ```bash
    git init

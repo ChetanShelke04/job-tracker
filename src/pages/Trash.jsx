@@ -5,7 +5,6 @@ import StatusBadge from '../components/common/StatusBadge';
 import {
   Trash2,
   RotateCcw,
-  AlertTriangle,
   Users,
   Briefcase
 } from 'lucide-react';
@@ -20,7 +19,7 @@ export default function Trash() {
     permanentlyDeleteApplication
   } = useContacts();
 
-  const [activeTab, setActiveTab] = useState('contacts'); // 'contacts' | 'applications'
+  const [activeTab, setActiveTab] = useState('contacts');
 
   const handlePermanentDeleteContact = (c) => {
     if (window.confirm(`Permanently delete "${c.name}" (${c.company})? This cannot be undone.`)) {
@@ -34,34 +33,34 @@ export default function Trash() {
     }
   };
 
-  const totalTrash = trashContacts.length + trashApplications.length;
-
   return (
     <div>
-      {/* Header */}
-      <div className="page-header">
-        <div className="page-title">
-          <h2>Trash & Archive</h2>
+      {/* Banner */}
+      <div className="page-title-banner">
+        <div>
+          <h2>Trash & Archived Records</h2>
           <p>
-            Review soft-deleted contacts and applications. You can restore them anytime or permanently delete them.
+            Soft-deleted contacts and job applications live here. You can restore them anytime or permanently delete them.
           </p>
         </div>
       </div>
 
       {/* Tabs */}
-      <div className="chips-bar" style={{ borderRadius: '10px 10px 0 0', border: '1px solid #dfe6f0', borderBottom: 'none' }}>
+      <div className="filter-chips-bar" style={{ borderRadius: '10px 10px 0 0', border: '1px solid #e2e8f0', borderBottom: 'none' }}>
         <button
-          className={`chip ${activeTab === 'contacts' ? 'active' : ''}`}
+          type="button"
+          className={`filter-chip ${activeTab === 'contacts' ? 'active' : ''}`}
           onClick={() => setActiveTab('contacts')}
         >
-          <Users size={13} style={{ marginRight: '4px' }} />
+          <Users size={13} style={{ marginRight: '3px' }} />
           <span>Contacts ({trashContacts.length})</span>
         </button>
         <button
-          className={`chip ${activeTab === 'applications' ? 'active' : ''}`}
+          type="button"
+          className={`filter-chip ${activeTab === 'applications' ? 'active' : ''}`}
           onClick={() => setActiveTab('applications')}
         >
-          <Briefcase size={13} style={{ marginRight: '4px' }} />
+          <Briefcase size={13} style={{ marginRight: '3px' }} />
           <span>Applications ({trashApplications.length})</span>
         </button>
       </div>
@@ -70,10 +69,10 @@ export default function Trash() {
       <section className="panel" style={{ borderRadius: '0 0 10px 10px' }}>
         {activeTab === 'contacts' ? (
           trashContacts.length === 0 ? (
-            <div className="empty-state">
-              <span className="empty-icon">🗑️</span>
+            <div className="empty-view-state">
+              <div className="empty-view-icon">🗑️</div>
               <h4>Trash is empty</h4>
-              <p>No contacts have been deleted.</p>
+              <p>No contacts have been soft-deleted.</p>
             </div>
           ) : (
             <div className="table-container">
@@ -83,7 +82,7 @@ export default function Trash() {
                     <th>HR Name & Company</th>
                     <th>Phone</th>
                     <th>Status</th>
-                    <th>Deleted At</th>
+                    <th>Deleted Date</th>
                     <th style={{ textAlign: 'right' }}>Actions</th>
                   </tr>
                 </thead>
@@ -91,25 +90,27 @@ export default function Trash() {
                   {trashContacts.map(c => (
                     <tr key={c.id}>
                       <td>
-                        <div className="contact-name">{c.name}</div>
-                        <div className="company-sub">{c.company}</div>
+                        <div className="table-cell-name">{c.name}</div>
+                        <div className="table-cell-sub">{c.company}</div>
                       </td>
                       <td>{c.phone}</td>
                       <td><StatusBadge status={c.status} /></td>
-                      <td style={{ fontSize: '12px', color: '#66748b' }}>
+                      <td style={{ fontSize: '12px', color: '#64748b' }}>
                         {formatDate(c.deleted_at)}
                       </td>
                       <td>
-                        <div className="table-actions" style={{ justifyContent: 'flex-end' }}>
+                        <div className="row-actions-group" style={{ justifyContent: 'flex-end' }}>
                           <button
+                            type="button"
                             className="btn btn-sm btn-success"
                             onClick={() => restoreContact(c.id)}
                             title="Restore Contact"
                           >
-                            <RotateCcw size={13} />
+                            <RotateCcw size={12} />
                             <span>Restore</span>
                           </button>
                           <button
+                            type="button"
                             className="btn btn-sm btn-icon btn-danger"
                             onClick={() => handlePermanentDeleteContact(c)}
                             title="Delete Permanently"
@@ -126,10 +127,10 @@ export default function Trash() {
           )
         ) : (
           trashApplications.length === 0 ? (
-            <div className="empty-state">
-              <span className="empty-icon">🗑️</span>
+            <div className="empty-view-state">
+              <div className="empty-view-icon">🗑️</div>
               <h4>Trash is empty</h4>
-              <p>No job applications have been deleted.</p>
+              <p>No job applications have been soft-deleted.</p>
             </div>
           ) : (
             <div className="table-container">
@@ -138,7 +139,7 @@ export default function Trash() {
                   <tr>
                     <th>Company & Job Title</th>
                     <th>Status</th>
-                    <th>Deleted At</th>
+                    <th>Deleted Date</th>
                     <th style={{ textAlign: 'right' }}>Actions</th>
                   </tr>
                 </thead>
@@ -146,24 +147,26 @@ export default function Trash() {
                   {trashApplications.map(app => (
                     <tr key={app.id}>
                       <td>
-                        <div className="contact-name">{app.company_name}</div>
-                        <div className="company-sub">{app.job_title}</div>
+                        <div className="table-cell-name">{app.company_name}</div>
+                        <div className="table-cell-sub">{app.job_title}</div>
                       </td>
                       <td><StatusBadge status={app.application_status} type="application" /></td>
-                      <td style={{ fontSize: '12px', color: '#66748b' }}>
+                      <td style={{ fontSize: '12px', color: '#64748b' }}>
                         {formatDate(app.deleted_at)}
                       </td>
                       <td>
-                        <div className="table-actions" style={{ justifyContent: 'flex-end' }}>
+                        <div className="row-actions-group" style={{ justifyContent: 'flex-end' }}>
                           <button
+                            type="button"
                             className="btn btn-sm btn-success"
                             onClick={() => restoreApplication(app.id)}
                             title="Restore Application"
                           >
-                            <RotateCcw size={13} />
+                            <RotateCcw size={12} />
                             <span>Restore</span>
                           </button>
                           <button
+                            type="button"
                             className="btn btn-sm btn-icon btn-danger"
                             onClick={() => handlePermanentDeleteApp(app)}
                             title="Delete Permanently"
@@ -183,4 +186,3 @@ export default function Trash() {
     </div>
   );
 }
-

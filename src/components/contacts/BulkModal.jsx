@@ -32,9 +32,7 @@ export default function BulkModal({ isOpen, onClose }) {
     });
   };
 
-  const addRow = () => {
-    setRows(prev => [...prev, emptyRow()]);
-  };
+  const addRow = () => setRows(prev => [...prev, emptyRow()]);
 
   const addFiveRows = () => {
     setRows(prev => [...prev, emptyRow(), emptyRow(), emptyRow(), emptyRow(), emptyRow()]);
@@ -44,11 +42,9 @@ export default function BulkModal({ isOpen, onClose }) {
     setRows(prev => prev.filter((_, i) => i !== index));
   };
 
-  // Parse pasted spreadsheet data (tab-separated or comma-separated)
   const applyPastedData = () => {
     if (!pasteText.trim()) return;
 
-    // Use PapaParse to parse TSV or CSV
     const parsed = Papa.parse(pasteText.trim(), {
       delimiter: pasteText.includes('\t') ? '\t' : undefined,
       skipEmptyLines: true
@@ -72,7 +68,6 @@ export default function BulkModal({ isOpen, onClose }) {
     }
   };
 
-  // Load from CSV file into bulk rows
   const handleCsvUpload = (e) => {
     const file = e.target.files[0];
     if (!file) return;
@@ -106,13 +101,12 @@ export default function BulkModal({ isOpen, onClose }) {
     const seenInBatch = new Set();
     const toInsert = [];
 
-    // Filter valid rows
     for (const row of rows) {
       const name = (row.name || '').trim();
       const company = (row.company || '').trim();
       const phone = (row.phone || '').trim();
 
-      if (!name && !company && !phone) continue; // skip blank row
+      if (!name && !company && !phone) continue;
 
       if (!name || !company || !phone) {
         setError('Every non-empty row must include Name, Company, and Phone.');
@@ -121,14 +115,12 @@ export default function BulkModal({ isOpen, onClose }) {
 
       const pKey = getPhoneKey(phone);
       if (pKey.length < 6) {
-        setError(`Phone "${phone}" is too short (must have at least 6 digits).`);
+        setError(`Phone "${phone}" must have at least 6 digits.`);
         return;
       }
 
-      // Check duplicate
       if (existingKeys.has(pKey) || seenInBatch.has(pKey)) {
-        // Skip duplicate silently as requested in prompt: "skipping duplicates"
-        continue;
+        continue; // skip duplicate
       }
 
       seenInBatch.add(pKey);
@@ -159,15 +151,15 @@ export default function BulkModal({ isOpen, onClose }) {
 
   return (
     <div className="modal-overlay" onClick={onClose} role="dialog" aria-modal="true">
-      <div className="modal modal-lg" onClick={(e) => e.stopPropagation()}>
+      <div className="modal-card modal-lg" onClick={(e) => e.stopPropagation()}>
         <div className="modal-header">
           <div>
             <h3>Bulk Add Contacts</h3>
-            <p>Paste multiple HR contacts from spreadsheets or enter them row-by-row</p>
+            <p>Paste multiple HR recruiters from spreadsheets or enter them row-by-row</p>
           </div>
           <button
             type="button"
-            className="btn btn-sm btn-icon"
+            className="btn btn-sm btn-icon btn-ghost"
             onClick={onClose}
             aria-label="Close"
           >
@@ -178,41 +170,41 @@ export default function BulkModal({ isOpen, onClose }) {
         <div className="modal-body">
           {error && (
             <div style={{
-              background: '#ffebe9',
-              color: '#b42318',
-              border: '1px solid #fecdca',
+              background: '#fef2f2',
+              color: '#dc2626',
+              border: '1px solid #fecaca',
               padding: '10px 14px',
-              borderRadius: '6px',
+              borderRadius: '8px',
               marginBottom: '14px',
-              fontSize: '13px'
+              fontSize: '12.5px'
             }}>
               {error}
             </div>
           )}
 
-          {/* Bulk Action Toolbar */}
+          {/* Action Toolbar */}
           <div style={{
             display: 'flex',
             gap: '8px',
-            marginBottom: '14px',
+            marginBottom: '12px',
             flexWrap: 'wrap',
             alignItems: 'center'
           }}>
             <button type="button" className="btn btn-sm" onClick={addRow}>
-              <Plus size={14} /> Add 1 Row
+              <Plus size={13} /> Add 1 Row
             </button>
             <button type="button" className="btn btn-sm" onClick={addFiveRows}>
-              <Plus size={14} /> Add 5 Rows
+              <Plus size={13} /> Add 5 Rows
             </button>
             <button
               type="button"
               className={`btn btn-sm ${pasteMode ? 'btn-primary' : ''}`}
               onClick={() => setPasteMode(prev => !prev)}
             >
-              <Clipboard size={14} /> Paste from Sheets / Excel
+              <Clipboard size={13} /> Paste from Sheets / Excel
             </button>
             <label className="btn btn-sm" style={{ cursor: 'pointer' }}>
-              <FileUp size={14} /> Import CSV into Rows
+              <FileUp size={13} /> Import CSV into Rows
               <input
                 type="file"
                 accept=".csv"
@@ -222,20 +214,20 @@ export default function BulkModal({ isOpen, onClose }) {
             </label>
           </div>
 
-          {/* Paste Input Container */}
+          {/* Paste Container */}
           {pasteMode && (
             <div style={{
-              background: '#f8faff',
-              border: '1px solid #dfe6f0',
+              background: '#f8fafc',
+              border: '1px solid #e2e8f0',
               borderRadius: '8px',
               padding: '12px',
               marginBottom: '14px'
             }}>
-              <p style={{ fontSize: '12px', color: '#66748b', marginBottom: '8px' }}>
-                Copy columns (HR Name, Company, Phone, Status, Notes) from Excel or Google Sheets and paste below:
+              <p style={{ fontSize: '12px', color: '#64748b', marginBottom: '8px' }}>
+                Copy columns (HR Name, Company, Phone, Status, Notes) from Excel or Sheets and paste below:
               </p>
               <textarea
-                rows={4}
+                rows={3}
                 value={pasteText}
                 onChange={(e) => setPasteText(e.target.value)}
                 placeholder="Priya Sharma [TAB] Acme Corp [TAB] 9876543210 [TAB] Connected [TAB] Referred by Rahul"
@@ -246,36 +238,36 @@ export default function BulkModal({ isOpen, onClose }) {
                 className="btn btn-primary btn-sm"
                 onClick={applyPastedData}
               >
-                <Check size={14} /> Parse & Add into Table
+                <Check size={13} /> Parse & Add into Table
               </button>
             </div>
           )}
 
-          {/* Bulk Table */}
-          <div className="table-container" style={{ maxHeight: '48vh', border: '1px solid #dfe6f0', borderRadius: '8px' }}>
+          {/* Table */}
+          <div className="table-container" style={{ maxHeight: '46vh', border: '1px solid #e2e8f0', borderRadius: '8px' }}>
             <table>
               <thead>
                 <tr>
-                  <th style={{ width: '40px' }}>#</th>
+                  <th style={{ width: '38px' }}>#</th>
                   <th>HR Name *</th>
                   <th>Company *</th>
                   <th>Phone *</th>
                   <th>Status</th>
                   <th>Notes</th>
-                  <th style={{ width: '40px' }}></th>
+                  <th style={{ width: '38px' }}></th>
                 </tr>
               </thead>
               <tbody>
                 {rows.map((row, idx) => (
                   <tr key={idx}>
-                    <td style={{ color: '#94a3b8', fontSize: '12px' }}>{idx + 1}</td>
+                    <td style={{ color: '#94a3b8', fontSize: '11.5px' }}>{idx + 1}</td>
                     <td>
                       <input
                         type="text"
                         placeholder="HR Name"
                         value={row.name}
                         onChange={(e) => handleRowChange(idx, 'name', e.target.value)}
-                        style={{ padding: '6px 8px', fontSize: '13px' }}
+                        style={{ padding: '5px 8px', fontSize: '12.5px', minHeight: '30px' }}
                       />
                     </td>
                     <td>
@@ -284,7 +276,7 @@ export default function BulkModal({ isOpen, onClose }) {
                         placeholder="Company"
                         value={row.company}
                         onChange={(e) => handleRowChange(idx, 'company', e.target.value)}
-                        style={{ padding: '6px 8px', fontSize: '13px' }}
+                        style={{ padding: '5px 8px', fontSize: '12.5px', minHeight: '30px' }}
                       />
                     </td>
                     <td>
@@ -293,14 +285,14 @@ export default function BulkModal({ isOpen, onClose }) {
                         placeholder="Phone"
                         value={row.phone}
                         onChange={(e) => handleRowChange(idx, 'phone', e.target.value)}
-                        style={{ padding: '6px 8px', fontSize: '13px' }}
+                        style={{ padding: '5px 8px', fontSize: '12.5px', minHeight: '30px' }}
                       />
                     </td>
                     <td>
                       <select
                         value={row.status}
                         onChange={(e) => handleRowChange(idx, 'status', e.target.value)}
-                        style={{ padding: '6px 8px', fontSize: '12px' }}
+                        style={{ padding: '5px 8px', fontSize: '12px', minHeight: '30px' }}
                       >
                         {STATUSES.map(s => (
                           <option key={s} value={s}>{s}</option>
@@ -313,18 +305,18 @@ export default function BulkModal({ isOpen, onClose }) {
                         placeholder="Notes"
                         value={row.notes}
                         onChange={(e) => handleRowChange(idx, 'notes', e.target.value)}
-                        style={{ padding: '6px 8px', fontSize: '13px' }}
+                        style={{ padding: '5px 8px', fontSize: '12.5px', minHeight: '30px' }}
                       />
                     </td>
                     <td>
                       <button
                         type="button"
-                        className="btn btn-sm btn-icon"
+                        className="btn btn-sm btn-icon btn-ghost"
                         onClick={() => removeRow(idx)}
-                        style={{ border: 'none', color: '#94a3b8' }}
+                        style={{ color: '#94a3b8' }}
                         title="Remove row"
                       >
-                        <Trash2 size={14} />
+                        <Trash2 size={13} />
                       </button>
                     </td>
                   </tr>
@@ -332,18 +324,18 @@ export default function BulkModal({ isOpen, onClose }) {
               </tbody>
             </table>
           </div>
-          <p style={{ fontSize: '11px', color: '#66748b', marginTop: '8px' }}>
-            Blank rows are ignored. Any phone numbers already present in your contacts will be skipped automatically.
+          <p style={{ fontSize: '11.5px', color: '#64748b', marginTop: '8px' }}>
+            Blank rows are ignored. Any duplicate phone numbers are skipped automatically.
           </p>
         </div>
 
         <div className="modal-footer">
-          <button type="button" className="btn" onClick={onClose} disabled={saving}>
+          <button type="button" className="btn btn-sm btn-ghost" onClick={onClose} disabled={saving}>
             Cancel
           </button>
           <button
             type="button"
-            className="btn btn-primary"
+            className="btn btn-sm btn-primary"
             onClick={handleSaveAll}
             disabled={saving}
           >
@@ -354,4 +346,3 @@ export default function BulkModal({ isOpen, onClose }) {
     </div>
   );
 }
-

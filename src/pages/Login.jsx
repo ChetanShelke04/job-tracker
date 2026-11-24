@@ -59,40 +59,40 @@ export default function Login() {
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'center',
-      background: 'linear-gradient(135deg, #f4f7fb 0%, #e8f0fe 100%)',
+      backgroundColor: '#f8fafc',
       padding: '20px'
     }}>
       <div style={{
         width: '100%',
-        maxWidth: '420px',
+        maxWidth: '400px',
         background: '#ffffff',
-        borderRadius: '16px',
-        boxShadow: '0 12px 40px rgba(20, 38, 75, 0.08)',
-        border: '1px solid #dfe6f0',
-        padding: '36px 32px'
+        borderRadius: '12px',
+        boxShadow: '0 4px 20px -2px rgba(15, 23, 42, 0.08), 0 2px 6px -1px rgba(15, 23, 42, 0.04)',
+        border: '1px solid #e2e8f0',
+        padding: '32px 28px'
       }}>
         {/* Brand header */}
-        <div style={{ textAlign: 'center', marginBottom: '28px' }}>
+        <div style={{ textAlign: 'center', marginBottom: '24px' }}>
           <div style={{
-            width: '48px',
-            height: '48px',
-            background: '#245de8',
+            width: '40px',
+            height: '40px',
+            background: '#2563eb',
             color: '#ffffff',
-            borderRadius: '14px',
+            borderRadius: '10px',
             display: 'inline-flex',
             alignItems: 'center',
             justifyContent: 'center',
-            boxShadow: '0 4px 12px rgba(36, 93, 232, 0.3)',
+            boxShadow: '0 2px 8px rgba(37, 99, 235, 0.25)',
             marginBottom: '12px'
           }}>
-            <PhoneCall size={26} />
+            <PhoneCall size={20} />
           </div>
-          <h2 style={{ fontSize: '24px', fontWeight: 800, color: '#182238', letterSpacing: '-0.5px' }}>
+          <h2 style={{ fontSize: '20px', fontWeight: 700, color: '#0f172a', letterSpacing: '-0.025em' }}>
             Job Tracker
           </h2>
-          <p style={{ fontSize: '13px', color: '#66748b', marginTop: '4px' }}>
-            {mode === 'login' && 'Sign in to access your HR Calling CRM'}
-            {mode === 'register' && 'Create your personal tracker account'}
+          <p style={{ fontSize: '13px', color: '#64748b', marginTop: '2px' }}>
+            {mode === 'login' && 'Sign in to access your CRM'}
+            {mode === 'register' && 'Create your tracker account'}
             {mode === 'forgot' && 'Reset your account password'}
           </p>
         </div>
@@ -100,59 +100,59 @@ export default function Login() {
         {/* Supabase Not Configured Notice */}
         {!isConfigured && (
           <div style={{
-            background: '#fff9e9',
-            border: '1px solid #f0d49d',
+            background: '#fffbeb',
+            border: '1px solid #fde68a',
             borderRadius: '8px',
             padding: '12px',
-            marginBottom: '20px',
+            marginBottom: '18px',
             fontSize: '12px',
-            color: '#78500b'
+            color: '#92400e'
           }}>
-            <strong>Supabase Setup Required:</strong> Please configure your Supabase project credentials in <code>.env</code> (<code>VITE_SUPABASE_URL</code> and <code>VITE_SUPABASE_ANON_KEY</code>).
+            <strong>Supabase Setup Required:</strong> Please configure your Supabase credentials in <code>.env</code>.
           </div>
         )}
 
         {/* Feedback Alerts */}
         {error && (
           <div style={{
-            background: '#ffebe9',
-            border: '1px solid #fecdca',
+            background: '#fef2f2',
+            border: '1px solid #fecaca',
             borderRadius: '8px',
-            padding: '10px 14px',
+            padding: '10px 12px',
             marginBottom: '16px',
             display: 'flex',
             alignItems: 'flex-start',
             gap: '8px',
-            color: '#b42318',
-            fontSize: '13px'
+            color: '#dc2626',
+            fontSize: '12.5px'
           }}>
-            <AlertCircle size={16} style={{ marginTop: '2px', flexShrink: 0 }} />
+            <AlertCircle size={15} style={{ marginTop: '2px', flexShrink: 0 }} />
             <span>{error}</span>
           </div>
         )}
 
         {infoMessage && (
           <div style={{
-            background: '#e1f7e9',
-            border: '1px solid #b7ebca',
+            background: '#ecfdf5',
+            border: '1px solid #a7f3d0',
             borderRadius: '8px',
-            padding: '10px 14px',
+            padding: '10px 12px',
             marginBottom: '16px',
             display: 'flex',
             alignItems: 'center',
             gap: '8px',
-            color: '#137a45',
-            fontSize: '13px'
+            color: '#059669',
+            fontSize: '12.5px'
           }}>
-            <CheckCircle2 size={16} style={{ flexShrink: 0 }} />
+            <CheckCircle2 size={15} style={{ flexShrink: 0 }} />
             <span>{infoMessage}</span>
           </div>
         )}
 
-        {/* Auth Form */}
+        {/* Form */}
         <form onSubmit={handleSubmit}>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-            <div className="form-group">
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
+            <div className="form-group-item">
               <label htmlFor="login-username">Username or Email</label>
               <div style={{ position: 'relative' }}>
                 <input
@@ -163,30 +163,30 @@ export default function Login() {
                   placeholder="e.g. chetan or friend1"
                   value={usernameOrEmail}
                   onChange={(e) => setUsernameOrEmail(e.target.value)}
-                  style={{ paddingLeft: '36px' }}
+                  style={{ paddingLeft: '34px' }}
                 />
-                <User size={16} style={{
+                <User size={15} style={{
                   position: 'absolute',
-                  left: '11px',
+                  left: '10px',
                   top: '50%',
                   transform: 'translateY(-50%)',
                   color: '#94a3b8'
                 }} />
               </div>
-              <span className="hint">
+              <span className="field-hint">
                 Type your username (e.g. chetan) or your full email.
               </span>
             </div>
 
             {mode !== 'forgot' && (
-              <div className="form-group">
+              <div className="form-group-item">
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                   <label htmlFor="login-password">Password</label>
                   {mode === 'login' && (
                     <button
                       type="button"
                       onClick={() => { setMode('forgot'); setError(''); }}
-                      style={{ background: 'none', border: 'none', color: '#245de8', fontSize: '11px', cursor: 'pointer', padding: 0 }}
+                      style={{ background: 'none', border: 'none', color: '#2563eb', fontSize: '11px', cursor: 'pointer', padding: 0 }}
                     >
                       Forgot password?
                     </button>
@@ -200,11 +200,11 @@ export default function Login() {
                     placeholder="Enter your password"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    style={{ paddingLeft: '36px', paddingRight: '36px' }}
+                    style={{ paddingLeft: '34px', paddingRight: '34px' }}
                   />
-                  <Lock size={16} style={{
+                  <Lock size={15} style={{
                     position: 'absolute',
-                    left: '11px',
+                    left: '10px',
                     top: '50%',
                     transform: 'translateY(-50%)',
                     color: '#94a3b8'
@@ -221,11 +221,11 @@ export default function Login() {
                       border: 'none',
                       color: '#94a3b8',
                       cursor: 'pointer',
-                      padding: '4px'
+                      padding: 0
                     }}
                     aria-label={showPassword ? 'Hide password' : 'Show password'}
                   >
-                    {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+                    {showPassword ? <EyeOff size={15} /> : <Eye size={15} />}
                   </button>
                 </div>
               </div>
@@ -246,19 +246,19 @@ export default function Login() {
                   ? 'Create Account'
                   : 'Send Reset Link'}
               </span>
-              {!loading && <ArrowRight size={16} />}
+              {!loading && <ArrowRight size={15} />}
             </button>
           </div>
         </form>
 
-        {/* Mode Toggle Links */}
+        {/* Footer links */}
         <div style={{
-          marginTop: '24px',
+          marginTop: '20px',
           paddingTop: '16px',
-          borderTop: '1px solid #dfe6f0',
+          borderTop: '1px solid #f1f5f9',
           textAlign: 'center',
           fontSize: '12px',
-          color: '#66748b'
+          color: '#64748b'
         }}>
           {mode === 'login' ? (
             <p>
@@ -266,7 +266,7 @@ export default function Login() {
               <button
                 type="button"
                 onClick={() => { setMode('register'); setError(''); }}
-                style={{ background: 'none', border: 'none', color: '#245de8', fontWeight: 600, cursor: 'pointer' }}
+                style={{ background: 'none', border: 'none', color: '#2563eb', fontWeight: 600, cursor: 'pointer' }}
               >
                 Register an account
               </button>
@@ -277,7 +277,7 @@ export default function Login() {
               <button
                 type="button"
                 onClick={() => { setMode('login'); setError(''); }}
-                style={{ background: 'none', border: 'none', color: '#245de8', fontWeight: 600, cursor: 'pointer' }}
+                style={{ background: 'none', border: 'none', color: '#2563eb', fontWeight: 600, cursor: 'pointer' }}
               >
                 Back to Sign In
               </button>
@@ -288,4 +288,3 @@ export default function Login() {
     </div>
   );
 }
-

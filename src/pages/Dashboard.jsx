@@ -9,17 +9,17 @@ import CallModal from '../components/calls/CallModal';
 import BulkModal from '../components/contacts/BulkModal';
 import {
   Users,
-  CalendarClock,
-  PhoneOff,
-  CalendarCheck,
   PhoneCall,
+  CalendarClock,
+  AlertTriangle,
   Briefcase,
   Phone,
   Plus,
   ArrowRight,
   Clock,
-  AlertTriangle,
-  FileSpreadsheet
+  FileSpreadsheet,
+  CheckCircle2,
+  CalendarCheck
 } from 'lucide-react';
 
 export default function Dashboard() {
@@ -32,24 +32,21 @@ export default function Dashboard() {
   const [callModalOpen, setCallModalOpen] = useState(false);
   const [activeCallContact, setActiveCallContact] = useState(null);
 
-  // Computations
+  // Computed metrics
   const totalContacts = contacts.length;
-  const dueContacts = contacts.filter(
-    c => c.followup_date && (isDueToday(c.followup_date) || isOverdue(c.followup_date))
-  );
-  const overdueCount = contacts.filter(c => c.followup_date && isOverdue(c.followup_date)).length;
-  const neverCalledCount = contacts.filter(c => c.status === 'Not Called' && !c.last_call_at).length;
-  const interviewsCount = contacts.filter(c => c.status === 'Interview Scheduled' || c.interview_date).length;
-  const totalCallsLogged = calls.length;
-  const offersCount = applications.filter(a => a.application_status === 'Offer Received' || a.application_status === 'Offer Accepted').length;
+  const callsMade = calls.length;
+  const todayFollowUps = contacts.filter(c => c.followup_date && isDueToday(c.followup_date));
+  const overdueFollowUps = contacts.filter(c => c.followup_date && isOverdue(c.followup_date));
+  const activeApplications = applications.filter(a => !['Rejected', 'Withdrawn', 'Offer Accepted'].includes(a.application_status));
 
-  // Urgent follow-ups list (overdue first, then due today, max 6)
-  const urgentFollowUps = [...dueContacts].sort((a, b) => {
-    return (a.followup_date || '').localeCompare(b.followup_date || '');
-  }).slice(0, 6);
+  // Urgent & Upcoming Follow-ups (overdue first, then today, max 6)
+  const urgentFollowUps = [...overdueFollowUps, ...todayFollowUps].slice(0, 6);
 
-  // Recent calls (last 10)
-  const recentCalls = calls.slice(0, 10);
+  // Recent calls (last 6)
+  const recentCalls = calls.slice(0, 6);
+
+  // Recent job application updates (last 4)
+  const recentApplications = applications.slice(0, 4);
 
   const handleOpenCallModal = (contact) => {
     setActiveCallContact(contact);
@@ -59,141 +56,149 @@ export default function Dashboard() {
   return (
     <div>
       {/* Page Header */}
-      <div className="page-header">
-        <div className="page-title">
-          <h2>Welcome back, {username}!</h2>
-          <p>Here is your HR recruiter pipeline and upcoming follow-ups.</p>
+      <div className="page-title-banner">
+        <div>
+          <h2>Good day, {username}</h2>
+          <p>Here is your recruiter outreach pipeline and upcoming follow-ups.</p>
         </div>
-        <div className="header-actions">
-          <button className="btn" onClick={() => setBulkModalOpen(true)}>
-            <FileSpreadsheet size={15} />
+        <div className="page-banner-actions">
+          <button
+            type="button"
+            className="btn btn-sm"
+            onClick={() => setBulkModalOpen(true)}
+          >
+            <FileSpreadsheet size={14} />
             <span>Bulk Add</span>
           </button>
-          <button className="btn btn-primary" onClick={() => setContactModalOpen(true)}>
-            <Plus size={15} />
+          <button
+            type="button"
+            className="btn btn-sm btn-primary"
+            onClick={() => setContactModalOpen(true)}
+          >
+            <Plus size={14} />
             <span>Add Contact</span>
           </button>
         </div>
       </div>
 
-      {/* Stats Cards Grid */}
-      <div className="stats-grid">
+      {/* 5 Information Metric Cards */}
+      <div className="metrics-row">
+        {/* Total HR Contacts */}
         <div
-          className="stat-card blue"
+          className="metric-card blue"
           onClick={() => navigate('/contacts')}
           title="View all contacts"
         >
-          <div className="stat-header">
-            <span className="stat-label">Total HR</span>
-            <div className="stat-icon"><Users size={16} /></div>
+          <div className="metric-card-top">
+            <span className="metric-card-label">Total HR Contacts</span>
+            <div className="metric-icon-wrap"><Users size={15} /></div>
           </div>
-          <div className="stat-value">{loading ? '…' : totalContacts}</div>
+          <div className="metric-card-value">{loading ? '…' : totalContacts}</div>
+          <div className="metric-card-subtext" style={{ color: '#64748b' }}>
+            In active directory
+          </div>
         </div>
 
+        {/* Calls Made */}
         <div
-          className={`stat-card ${dueContacts.length > 0 ? 'red' : 'green'}`}
-          onClick={() => navigate('/follow-ups')}
-          title="View follow-ups due"
-        >
-          <div className="stat-header">
-            <span className="stat-label">Follow-ups Due</span>
-            <div className="stat-icon"><CalendarClock size={16} /></div>
-          </div>
-          <div className="stat-value">
-            {loading ? '…' : dueContacts.length}
-          </div>
-          {overdueCount > 0 && (
-            <span style={{ fontSize: '11px', color: '#b42318', fontWeight: 700 }}>
-              {overdueCount} overdue
-            </span>
-          )}
-        </div>
-
-        <div
-          className="stat-card amber"
-          onClick={() => navigate('/contacts?filter=never-called')}
-          title="View never called contacts"
-        >
-          <div className="stat-header">
-            <span className="stat-label">Never Called</span>
-            <div className="stat-icon"><PhoneOff size={16} /></div>
-          </div>
-          <div className="stat-value">{loading ? '…' : neverCalledCount}</div>
-        </div>
-
-        <div
-          className="stat-card purple"
-          onClick={() => navigate('/contacts?filter=interviews')}
-          title="View scheduled interviews"
-        >
-          <div className="stat-header">
-            <span className="stat-label">Interviews</span>
-            <div className="stat-icon"><CalendarCheck size={16} /></div>
-          </div>
-          <div className="stat-value">{loading ? '…' : interviewsCount}</div>
-        </div>
-
-        <div
-          className="stat-card blue"
+          className="metric-card blue"
           onClick={() => navigate('/contacts')}
           title="Total calls logged"
         >
-          <div className="stat-header">
-            <span className="stat-label">Calls Logged</span>
-            <div className="stat-icon"><PhoneCall size={16} /></div>
+          <div className="metric-card-top">
+            <span className="metric-card-label">Calls Made</span>
+            <div className="metric-icon-wrap"><PhoneCall size={15} /></div>
           </div>
-          <div className="stat-value">{loading ? '…' : totalCallsLogged}</div>
+          <div className="metric-card-value">{loading ? '…' : callsMade}</div>
+          <div className="metric-card-subtext" style={{ color: '#059669' }}>
+            Outreach calls logged
+          </div>
         </div>
 
+        {/* Today's Follow-ups */}
         <div
-          className="stat-card green"
-          onClick={() => navigate('/applications')}
-          title="View job applications and offers"
+          className={`metric-card ${todayFollowUps.length > 0 ? 'amber' : 'emerald'}`}
+          onClick={() => navigate('/follow-ups?tab=today')}
+          title="View today's follow-ups"
         >
-          <div className="stat-header">
-            <span className="stat-label">Applications / Offers</span>
-            <div className="stat-icon"><Briefcase size={16} /></div>
+          <div className="metric-card-top">
+            <span className="metric-card-label">Today's Follow-ups</span>
+            <div className="metric-icon-wrap"><CalendarClock size={15} /></div>
           </div>
-          <div className="stat-value">
-            {loading ? '…' : `${applications.length} / ${offersCount}`}
+          <div className="metric-card-value">{loading ? '…' : todayFollowUps.length}</div>
+          <div className="metric-card-subtext" style={{ color: todayFollowUps.length > 0 ? '#d97706' : '#059669' }}>
+            {todayFollowUps.length > 0 ? 'Callbacks due today' : 'No follow-ups due today'}
+          </div>
+        </div>
+
+        {/* Overdue Follow-ups */}
+        <div
+          className={`metric-card ${overdueFollowUps.length > 0 ? 'red' : 'emerald'}`}
+          onClick={() => navigate('/follow-ups?tab=overdue')}
+          title="View overdue follow-ups"
+        >
+          <div className="metric-card-top">
+            <span className="metric-card-label">Overdue Follow-ups</span>
+            <div className="metric-icon-wrap"><AlertTriangle size={15} /></div>
+          </div>
+          <div className="metric-card-value">{loading ? '…' : overdueFollowUps.length}</div>
+          <div className="metric-card-subtext" style={{ color: overdueFollowUps.length > 0 ? '#dc2626' : '#059669' }}>
+            {overdueFollowUps.length > 0 ? 'Action required' : 'None overdue'}
+          </div>
+        </div>
+
+        {/* Active Job Applications */}
+        <div
+          className="metric-card purple"
+          onClick={() => navigate('/applications')}
+          title="View job applications"
+        >
+          <div className="metric-card-top">
+            <span className="metric-card-label">Active Applications</span>
+            <div className="metric-icon-wrap"><Briefcase size={15} /></div>
+          </div>
+          <div className="metric-card-value">{loading ? '…' : activeApplications.length}</div>
+          <div className="metric-card-subtext" style={{ color: '#7c3aed' }}>
+            In interview pipeline
           </div>
         </div>
       </div>
 
-      {/* Main Dashboard Layout (2 Columns) */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(360px, 1fr))', gap: '20px' }}>
-        {/* Urgent Follow-ups */}
+      {/* Main Content Sections: 2 Columns */}
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(360px, 1fr))', gap: '20px', marginBottom: '22px' }}>
+        {/* Urgent Follow-ups List */}
         <section className="panel">
           <div className="panel-head">
             <div>
-              <h3>Urgent Follow-ups</h3>
+              <h3>Upcoming & Urgent Follow-ups</h3>
               <p>Callbacks and discussions due today or overdue</p>
             </div>
             <button
-              className="btn btn-sm"
+              type="button"
+              className="btn btn-sm btn-ghost"
               onClick={() => navigate('/follow-ups')}
             >
               <span>View All</span>
-              <ArrowRight size={14} />
+              <ArrowRight size={13} />
             </button>
           </div>
 
           <div className="panel-body" style={{ padding: '0' }}>
             {urgentFollowUps.length === 0 ? (
-              <div className="empty-state">
-                <span className="empty-icon">🎉</span>
+              <div className="empty-view-state">
+                <div className="empty-view-icon">🎉</div>
                 <h4>All caught up!</h4>
-                <p>No urgent follow-ups pending right now.</p>
+                <p>No urgent follow-ups pending right now. Great job keeping in touch!</p>
               </div>
             ) : (
               <div className="table-container">
                 <table>
                   <thead>
                     <tr>
-                      <th>HR / Company</th>
+                      <th>HR Contact</th>
                       <th>Phone</th>
-                      <th>Due</th>
-                      <th>Action</th>
+                      <th>Due Date</th>
+                      <th style={{ textAlign: 'right' }}>Action</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -202,28 +207,29 @@ export default function Dashboard() {
                       return (
                         <tr key={c.id}>
                           <td>
-                            <div className="contact-name">{c.name}</div>
-                            <div className="company-sub">{c.company}</div>
+                            <div className="table-cell-name">{c.name}</div>
+                            <div className="table-cell-sub">{c.company}</div>
                           </td>
                           <td>
-                            <a href={`tel:${c.phone}`} className="phone-link">
-                              <Phone size={13} />
+                            <a href={`tel:${c.phone}`} className="phone-action-link">
+                              <Phone size={12} />
                               <span>{c.phone}</span>
                             </a>
                           </td>
                           <td>
-                            <span className={overdue ? 'due-badge' : 'today-badge'}>
+                            <span className={overdue ? 'due-indicator' : 'today-indicator'}>
                               {overdue && <AlertTriangle size={12} />}
                               {formatDate(c.followup_date)}
                             </span>
                           </td>
-                          <td>
+                          <td style={{ textAlign: 'right' }}>
                             <button
+                              type="button"
                               className="btn btn-sm btn-primary"
                               onClick={() => handleOpenCallModal(c)}
-                              title="Log Call"
+                              title="Log Call Outcome"
                             >
-                              <PhoneCall size={13} />
+                              <PhoneCall size={12} />
                               <span>Log Call</span>
                             </button>
                           </td>
@@ -237,28 +243,29 @@ export default function Dashboard() {
           </div>
         </section>
 
-        {/* Recent Calls Log */}
+        {/* Recent Call Activities */}
         <section className="panel">
           <div className="panel-head">
             <div>
-              <h3>Recent Calls</h3>
-              <p>Last {recentCalls.length} calls logged across your contacts</p>
+              <h3>Recent Call Activities</h3>
+              <p>Last {recentCalls.length} calls logged with HR recruiters</p>
             </div>
             <button
-              className="btn btn-sm"
+              type="button"
+              className="btn btn-sm btn-ghost"
               onClick={() => navigate('/contacts')}
             >
               <span>Contacts</span>
-              <ArrowRight size={14} />
+              <ArrowRight size={13} />
             </button>
           </div>
 
           <div className="panel-body" style={{ padding: '0' }}>
             {recentCalls.length === 0 ? (
-              <div className="empty-state">
-                <Clock size={36} style={{ color: '#cbd5e1', marginBottom: '8px' }} />
+              <div className="empty-view-state">
+                <Clock size={32} style={{ color: '#cbd5e1', marginBottom: '8px' }} />
                 <h4>No calls logged yet</h4>
-                <p>Start calling HR recruiters and log your conversation outcomes.</p>
+                <p>Start calling recruiters and record your conversations.</p>
               </div>
             ) : (
               <div className="table-container">
@@ -274,10 +281,10 @@ export default function Dashboard() {
                     {recentCalls.map((call, idx) => (
                       <tr key={call.id || idx}>
                         <td>
-                          <div className="contact-name">
+                          <div className="table-cell-name">
                             {call.contacts?.name || 'HR Recruiter'}
                           </div>
-                          <div className="company-sub">
+                          <div className="table-cell-sub">
                             {call.contacts?.company || 'Company'}
                           </div>
                         </td>
@@ -286,7 +293,7 @@ export default function Dashboard() {
                           {call.notes && (
                             <div style={{
                               fontSize: '11px',
-                              color: '#66748b',
+                              color: '#64748b',
                               marginTop: '2px',
                               maxWidth: '180px',
                               overflow: 'hidden',
@@ -297,7 +304,7 @@ export default function Dashboard() {
                             </div>
                           )}
                         </td>
-                        <td style={{ fontSize: '12px', color: '#66748b' }}>
+                        <td style={{ fontSize: '12px', color: '#64748b' }}>
                           {formatDateTime(call.called_at)}
                         </td>
                       </tr>
@@ -309,6 +316,69 @@ export default function Dashboard() {
           </div>
         </section>
       </div>
+
+      {/* Recent Job Application Updates Section */}
+      {recentApplications.length > 0 && (
+        <section className="panel">
+          <div className="panel-head">
+            <div>
+              <h3>Recent Job Application Updates</h3>
+              <p>Active job search opportunities and interview rounds</p>
+            </div>
+            <button
+              type="button"
+              className="btn btn-sm btn-ghost"
+              onClick={() => navigate('/applications')}
+            >
+              <span>View Pipeline</span>
+              <ArrowRight size={13} />
+            </button>
+          </div>
+
+          <div className="panel-body" style={{ padding: '0' }}>
+            <div className="table-container">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Company & Role</th>
+                    <th>Status</th>
+                    <th>Applied Date</th>
+                    <th>Expected / Offered CTC</th>
+                    <th>Location</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {recentApplications.map(app => (
+                    <tr key={app.id}>
+                      <td>
+                        <div className="table-cell-name">{app.company_name}</div>
+                        <div className="table-cell-sub">{app.job_title}</div>
+                      </td>
+                      <td>
+                        <StatusBadge status={app.application_status} type="application" />
+                      </td>
+                      <td style={{ fontSize: '12px', color: '#64748b' }}>
+                        {formatDate(app.application_date)}
+                      </td>
+                      <td style={{ fontSize: '12px', fontWeight: 600 }}>
+                        {app.expected_ctc ? `₹${Number(app.expected_ctc).toLocaleString('en-IN')}` : '—'}
+                        {app.offered_ctc && (
+                          <span style={{ color: '#059669', marginLeft: '6px' }}>
+                            (Offered: ₹{Number(app.offered_ctc).toLocaleString('en-IN')})
+                          </span>
+                        )}
+                      </td>
+                      <td style={{ fontSize: '12px', color: '#64748b' }}>
+                        {app.location || '—'}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+      )}
 
       {/* Modals */}
       <ContactModal
@@ -332,4 +402,3 @@ export default function Dashboard() {
     </div>
   );
 }
-

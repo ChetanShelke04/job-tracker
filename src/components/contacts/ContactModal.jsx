@@ -54,7 +54,6 @@ export default function ContactModal({ isOpen, onClose, contactToEdit = null }) 
     }
   }, [isOpen, contactToEdit]);
 
-  // Live duplicate checking on phone input
   const handlePhoneChange = (e) => {
     const val = e.target.value;
     setPhone(val);
@@ -70,7 +69,6 @@ export default function ContactModal({ isOpen, onClose, contactToEdit = null }) 
     }
   };
 
-  // Close on Escape key
   useEffect(() => {
     const handleKeyDown = (e) => {
       if (e.key === 'Escape' && isOpen) {
@@ -127,7 +125,7 @@ export default function ContactModal({ isOpen, onClose, contactToEdit = null }) 
 
   return (
     <div className="modal-overlay" onClick={onClose} role="dialog" aria-modal="true">
-      <div className="modal" onClick={(e) => e.stopPropagation()}>
+      <div className="modal-card" onClick={(e) => e.stopPropagation()}>
         <div className="modal-header">
           <div>
             <h3>{contactToEdit ? 'Edit HR Contact' : 'Add New HR Contact'}</h3>
@@ -135,9 +133,9 @@ export default function ContactModal({ isOpen, onClose, contactToEdit = null }) 
           </div>
           <button
             type="button"
-            className="btn btn-sm btn-icon"
+            className="btn btn-sm btn-icon btn-ghost"
             onClick={onClose}
-            aria-label="Close modal"
+            aria-label="Close"
           >
             <X size={16} />
           </button>
@@ -147,25 +145,25 @@ export default function ContactModal({ isOpen, onClose, contactToEdit = null }) 
           <div className="modal-body">
             {error && (
               <div style={{
-                background: '#ffebe9',
-                color: '#b42318',
-                border: '1px solid #fecdca',
+                background: '#fef2f2',
+                color: '#dc2626',
+                border: '1px solid #fecaca',
                 padding: '10px 14px',
-                borderRadius: '6px',
+                borderRadius: '8px',
                 marginBottom: '14px',
                 display: 'flex',
                 alignItems: 'center',
                 gap: '8px',
-                fontSize: '13px'
+                fontSize: '12.5px'
               }}>
-                <AlertCircle size={16} />
+                <AlertCircle size={15} />
                 <span>{error}</span>
               </div>
             )}
 
-            <div className="form-grid">
-              <div className="form-group">
-                <label htmlFor="hr-name">HR Name <span className="required">*</span></label>
+            <div className="form-grid-2">
+              <div className="form-group-item">
+                <label htmlFor="hr-name">HR Name <span className="required-star">*</span></label>
                 <input
                   id="hr-name"
                   ref={nameInputRef}
@@ -177,20 +175,20 @@ export default function ContactModal({ isOpen, onClose, contactToEdit = null }) 
                 />
               </div>
 
-              <div className="form-group">
-                <label htmlFor="company">Company <span className="required">*</span></label>
+              <div className="form-group-item">
+                <label htmlFor="company">Company <span className="required-star">*</span></label>
                 <input
                   id="company"
                   type="text"
                   required
-                  placeholder="e.g. Infosys / Tech Mahindra"
+                  placeholder="e.g. Infosys / TCS"
                   value={company}
                   onChange={(e) => setCompany(e.target.value)}
                 />
               </div>
 
-              <div className="form-group">
-                <label htmlFor="phone">Phone Number <span className="required">*</span></label>
+              <div className="form-group-item">
+                <label htmlFor="phone">Phone Number <span className="required-star">*</span></label>
                 <input
                   id="phone"
                   type="tel"
@@ -200,24 +198,24 @@ export default function ContactModal({ isOpen, onClose, contactToEdit = null }) 
                   onChange={handlePhoneChange}
                 />
                 {duplicateWarning && (
-                  <span style={{ color: '#b42318', fontSize: '11px', fontWeight: 600 }}>
+                  <span style={{ color: '#dc2626', fontSize: '11px', fontWeight: 600 }}>
                     ⚠️ {duplicateWarning}
                   </span>
                 )}
               </div>
 
-              <div className="form-group">
+              <div className="form-group-item">
                 <label htmlFor="email">Email Address</label>
                 <input
                   id="email"
                   type="email"
-                  placeholder="e.g. priya@company.com"
+                  placeholder="e.g. recruiter@company.com"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                 />
               </div>
 
-              <div className="form-group">
+              <div className="form-group-item">
                 <label htmlFor="status">Current Status</label>
                 <select
                   id="status"
@@ -230,8 +228,8 @@ export default function ContactModal({ isOpen, onClose, contactToEdit = null }) 
                 </select>
               </div>
 
-              <div className="form-group">
-                <label htmlFor="next-action">Suggested Next Action</label>
+              <div className="form-group-item">
+                <label htmlFor="next-action">Next Action</label>
                 <select
                   id="next-action"
                   value={nextAction}
@@ -244,7 +242,7 @@ export default function ContactModal({ isOpen, onClose, contactToEdit = null }) 
                 </select>
               </div>
 
-              <div className="form-group">
+              <div className="form-group-item">
                 <label htmlFor="followup-date">Next Follow-up Date</label>
                 <input
                   id="followup-date"
@@ -254,7 +252,7 @@ export default function ContactModal({ isOpen, onClose, contactToEdit = null }) 
                 />
               </div>
 
-              <div className="form-group">
+              <div className="form-group-item">
                 <label htmlFor="interview-date">Interview Date</label>
                 <input
                   id="interview-date"
@@ -264,11 +262,11 @@ export default function ContactModal({ isOpen, onClose, contactToEdit = null }) 
                 />
               </div>
 
-              <div className="form-group full-width">
-                <label htmlFor="notes">Notes / Background</label>
+              <div className="form-group-item full-span">
+                <label htmlFor="notes">Discussion Notes</label>
                 <textarea
                   id="notes"
-                  placeholder="Role discussed, experience required, tech stack, job portal link, etc."
+                  placeholder="Role details, tech stack, referral context, salary discussion…"
                   value={notes}
                   onChange={(e) => setNotes(e.target.value)}
                   rows={3}
@@ -280,7 +278,7 @@ export default function ContactModal({ isOpen, onClose, contactToEdit = null }) 
           <div className="modal-footer">
             <button
               type="button"
-              className="btn"
+              className="btn btn-sm btn-ghost"
               onClick={onClose}
               disabled={saving}
             >
@@ -288,7 +286,7 @@ export default function ContactModal({ isOpen, onClose, contactToEdit = null }) 
             </button>
             <button
               type="submit"
-              className="btn btn-primary"
+              className="btn btn-sm btn-primary"
               disabled={saving || Boolean(duplicateWarning)}
             >
               {saving ? 'Saving…' : contactToEdit ? 'Save Changes' : 'Add Contact'}
@@ -299,4 +297,3 @@ export default function ContactModal({ isOpen, onClose, contactToEdit = null }) 
     </div>
   );
 }
-

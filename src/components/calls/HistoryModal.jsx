@@ -19,7 +19,6 @@ export default function HistoryModal({ isOpen, onClose, contact = null, onLogNew
     }
   }, [isOpen, contact, fetchContactCalls]);
 
-  // Close on Escape key
   useEffect(() => {
     const handleKeyDown = (e) => {
       if (e.key === 'Escape' && isOpen) {
@@ -34,7 +33,7 @@ export default function HistoryModal({ isOpen, onClose, contact = null, onLogNew
 
   return (
     <div className="modal-overlay" onClick={onClose} role="dialog" aria-modal="true">
-      <div className="modal modal-lg" onClick={(e) => e.stopPropagation()}>
+      <div className="modal-card modal-lg" onClick={(e) => e.stopPropagation()}>
         <div className="modal-header">
           <div>
             <h3>Call History: {contact.name}</h3>
@@ -42,7 +41,7 @@ export default function HistoryModal({ isOpen, onClose, contact = null, onLogNew
           </div>
           <button
             type="button"
-            className="btn btn-sm btn-icon"
+            className="btn btn-sm btn-icon btn-ghost"
             onClick={onClose}
             aria-label="Close"
           >
@@ -52,12 +51,12 @@ export default function HistoryModal({ isOpen, onClose, contact = null, onLogNew
 
         <div className="modal-body" style={{ maxHeight: '60vh', overflowY: 'auto' }}>
           {loading ? (
-            <div style={{ padding: '30px', textAlign: 'center', color: '#66748b' }}>
+            <div style={{ padding: '30px', textAlign: 'center', color: '#64748b' }}>
               Loading call logs…
             </div>
           ) : calls.length === 0 ? (
-            <div className="empty-state">
-              <Clock size={36} style={{ color: '#cbd5e1', marginBottom: '8px' }} />
+            <div className="empty-view-state">
+              <Clock size={32} style={{ color: '#cbd5e1', marginBottom: '8px' }} />
               <h4>No calls logged yet</h4>
               <p>You haven't recorded any conversations with this HR contact yet.</p>
               {onLogNewCall && (
@@ -69,21 +68,21 @@ export default function HistoryModal({ isOpen, onClose, contact = null, onLogNew
                     onLogNewCall(contact);
                   }}
                 >
-                  <PhoneCall size={14} />
+                  <PhoneCall size={13} />
                   <span>Log First Call</span>
                 </button>
               )}
             </div>
           ) : (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
               {calls.map((call, idx) => (
                 <div
                   key={call.id || idx}
                   style={{
-                    background: '#f8faff',
-                    border: '1px solid #dfe6f0',
+                    background: '#f8fafc',
+                    border: '1px solid #e2e8f0',
                     borderRadius: '8px',
-                    padding: '14px 16px'
+                    padding: '12px 14px'
                   }}
                 >
                   <div style={{
@@ -94,17 +93,17 @@ export default function HistoryModal({ isOpen, onClose, contact = null, onLogNew
                     flexWrap: 'wrap',
                     gap: '8px'
                   }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                       <StatusBadge status={call.outcome} />
-                      <span style={{ fontSize: '12px', color: '#66748b', fontWeight: 500 }}>
+                      <span style={{ fontSize: '12px', color: '#64748b' }}>
                         {formatDateTime(call.called_at)}
                       </span>
                     </div>
 
                     {call.followup_date && (
                       <span style={{
-                        fontSize: '12px',
-                        color: '#6941c6',
+                        fontSize: '11.5px',
+                        color: '#7c3aed',
                         display: 'flex',
                         alignItems: 'center',
                         gap: '4px',
@@ -118,9 +117,10 @@ export default function HistoryModal({ isOpen, onClose, contact = null, onLogNew
 
                   <p style={{
                     fontSize: '13px',
-                    color: call.notes ? '#182238' : '#94a3b8',
+                    color: call.notes ? '#0f172a' : '#94a3b8',
                     fontStyle: call.notes ? 'normal' : 'italic',
-                    whiteSpace: 'pre-wrap'
+                    whiteSpace: 'pre-wrap',
+                    lineHeight: 1.45
                   }}>
                     {call.notes || 'No discussion notes logged.'}
                   </p>
@@ -141,12 +141,12 @@ export default function HistoryModal({ isOpen, onClose, contact = null, onLogNew
                   onLogNewCall(contact);
                 }}
               >
-                <PhoneCall size={14} />
+                <PhoneCall size={13} />
                 <span>Log New Call</span>
               </button>
             )}
           </div>
-          <button type="button" className="btn" onClick={onClose}>
+          <button type="button" className="btn btn-sm btn-ghost" onClick={onClose}>
             Close
           </button>
         </div>
@@ -154,4 +154,3 @@ export default function HistoryModal({ isOpen, onClose, contact = null, onLogNew
     </div>
   );
 }
-

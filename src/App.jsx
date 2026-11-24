@@ -3,8 +3,7 @@ import { Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
 import { ContactsProvider } from './context/ContactsContext';
 import ProtectedRoute from './components/common/ProtectedRoute';
-import Navbar from './components/layout/Navbar';
-import Toast from './components/common/Toast';
+import AppLayout from './components/layout/AppLayout';
 
 import Login from './pages/Login';
 import Dashboard from './pages/Dashboard';
@@ -14,18 +13,6 @@ import Applications from './pages/Applications';
 import ImportExport from './pages/ImportExport';
 import Trash from './pages/Trash';
 
-function Layout({ children }) {
-  return (
-    <div className="app-container">
-      <Navbar />
-      <main className="main-content">
-        {children}
-      </main>
-      <Toast />
-    </div>
-  );
-}
-
 export default function App() {
   return (
     <AuthProvider>
@@ -34,14 +21,14 @@ export default function App() {
           {/* Public login page */}
           <Route path="/login" element={<Login />} />
 
-          {/* Protected CRM routes */}
+          {/* Protected CRM routes wrapped in modern AppLayout */}
           <Route
             path="/"
             element={
               <ProtectedRoute>
-                <Layout>
+                <AppLayout>
                   <Dashboard />
-                </Layout>
+                </AppLayout>
               </ProtectedRoute>
             }
           />
@@ -50,9 +37,9 @@ export default function App() {
             path="/contacts"
             element={
               <ProtectedRoute>
-                <Layout>
+                <AppLayout>
                   <Contacts />
-                </Layout>
+                </AppLayout>
               </ProtectedRoute>
             }
           />
@@ -61,9 +48,9 @@ export default function App() {
             path="/follow-ups"
             element={
               <ProtectedRoute>
-                <Layout>
+                <AppLayout>
                   <FollowUps />
-                </Layout>
+                </AppLayout>
               </ProtectedRoute>
             }
           />
@@ -72,9 +59,9 @@ export default function App() {
             path="/applications"
             element={
               <ProtectedRoute>
-                <Layout>
+                <AppLayout>
                   <Applications />
-                </Layout>
+                </AppLayout>
               </ProtectedRoute>
             }
           />
@@ -83,9 +70,9 @@ export default function App() {
             path="/import-export"
             element={
               <ProtectedRoute>
-                <Layout>
+                <AppLayout>
                   <ImportExport />
-                </Layout>
+                </AppLayout>
               </ProtectedRoute>
             }
           />
@@ -94,9 +81,9 @@ export default function App() {
             path="/trash"
             element={
               <ProtectedRoute>
-                <Layout>
+                <AppLayout>
                   <Trash />
-                </Layout>
+                </AppLayout>
               </ProtectedRoute>
             }
           />
@@ -108,4 +95,3 @@ export default function App() {
     </AuthProvider>
   );
 }
-

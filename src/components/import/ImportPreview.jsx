@@ -5,12 +5,11 @@ import { exportToCsv } from '../../lib/csv';
 import StatusBadge from '../common/StatusBadge';
 import {
   X,
-  CheckCircle2,
-  AlertTriangle,
   FileDown,
   DownloadCloud,
   ChevronDown,
-  ChevronUp
+  ChevronUp,
+  AlertTriangle
 } from 'lucide-react';
 
 export default function ImportPreview({ isOpen, onClose, previewData, onImportComplete }) {
@@ -55,14 +54,12 @@ export default function ImportPreview({ isOpen, onClose, previewData, onImportCo
     setErrorMessage('');
 
     try {
-      // Chunk valid contacts into batches of 200
       const chunks = chunkArray(validRows, 200);
       let importedCount = 0;
       const oldToNewIdMap = new Map();
 
       for (let i = 0; i < chunks.length; i++) {
         const chunk = chunks[i];
-        // Strip out temporary oldId before inserting into contacts
         const payload = chunk.map(({ oldId, ...rest }) => rest);
 
         const { data, error } = await supabase
@@ -72,7 +69,6 @@ export default function ImportPreview({ isOpen, onClose, previewData, onImportCo
 
         if (error) throw error;
 
-        // Map old IDs to newly inserted IDs if present
         if (data && data.length) {
           chunk.forEach((c, idx) => {
             if (c.oldId && data[idx]) {
@@ -86,7 +82,6 @@ export default function ImportPreview({ isOpen, onClose, previewData, onImportCo
         setProgress(currentProgress);
       }
 
-      // If there are pending calls from a JSON backup, import them linked to new contact IDs
       if (pendingCalls.length > 0 && oldToNewIdMap.size > 0) {
         const validCallsToInsert = [];
         pendingCalls.forEach(call => {
@@ -127,7 +122,7 @@ export default function ImportPreview({ isOpen, onClose, previewData, onImportCo
 
   return (
     <div className="modal-overlay" onClick={onClose} role="dialog" aria-modal="true">
-      <div className="modal modal-lg" onClick={(e) => e.stopPropagation()}>
+      <div className="modal-card modal-lg" onClick={(e) => e.stopPropagation()}>
         <div className="modal-header">
           <div>
             <h3>Import Preview</h3>
@@ -135,7 +130,7 @@ export default function ImportPreview({ isOpen, onClose, previewData, onImportCo
           </div>
           <button
             type="button"
-            className="btn btn-sm btn-icon"
+            className="btn btn-sm btn-icon btn-ghost"
             onClick={onClose}
             disabled={importing}
             aria-label="Close"
@@ -147,13 +142,13 @@ export default function ImportPreview({ isOpen, onClose, previewData, onImportCo
         <div className="modal-body">
           {errorMessage && (
             <div style={{
-              background: '#ffebe9',
-              color: '#b42318',
-              border: '1px solid #fecdca',
+              background: '#fef2f2',
+              color: '#dc2626',
+              border: '1px solid #fecaca',
               padding: '12px',
               borderRadius: '8px',
               marginBottom: '16px',
-              fontSize: '13px'
+              fontSize: '12.5px'
             }}>
               {errorMessage}
             </div>
@@ -163,27 +158,27 @@ export default function ImportPreview({ isOpen, onClose, previewData, onImportCo
           <div style={{
             display: 'grid',
             gridTemplateColumns: 'repeat(auto-fit, minmax(130px, 1fr))',
-            gap: '12px',
+            gap: '10px',
             marginBottom: '16px'
           }}>
-            <div className="stat-card blue" style={{ padding: '12px' }}>
-              <div className="stat-label">Total Rows</div>
-              <div className="stat-value" style={{ fontSize: '24px' }}>{totalRows}</div>
+            <div className="metric-card blue" style={{ padding: '12px' }}>
+              <div className="metric-card-label">Total Rows</div>
+              <div className="metric-card-value" style={{ fontSize: '22px' }}>{totalRows}</div>
             </div>
 
-            <div className="stat-card green" style={{ padding: '12px' }}>
-              <div className="stat-label">Ready to Import</div>
-              <div className="stat-value" style={{ fontSize: '24px' }}>{validRows.length}</div>
+            <div className="metric-card emerald" style={{ padding: '12px' }}>
+              <div className="metric-card-label">Ready to Import</div>
+              <div className="metric-card-value" style={{ fontSize: '22px', color: '#059669' }}>{validRows.length}</div>
             </div>
 
-            <div className="stat-card amber" style={{ padding: '12px' }}>
-              <div className="stat-label">Duplicates (Skipped)</div>
-              <div className="stat-value" style={{ fontSize: '24px' }}>{duplicateRows.length}</div>
+            <div className="metric-card amber" style={{ padding: '12px' }}>
+              <div className="metric-card-label">Duplicates (Skipped)</div>
+              <div className="metric-card-value" style={{ fontSize: '22px', color: '#d97706' }}>{duplicateRows.length}</div>
             </div>
 
-            <div className="stat-card red" style={{ padding: '12px' }}>
-              <div className="stat-label">Invalid Rows</div>
-              <div className="stat-value" style={{ fontSize: '24px' }}>{invalidRows.length}</div>
+            <div className="metric-card red" style={{ padding: '12px' }}>
+              <div className="metric-card-label">Invalid Rows</div>
+              <div className="metric-card-value" style={{ fontSize: '22px', color: '#dc2626' }}>{invalidRows.length}</div>
             </div>
           </div>
 
@@ -202,15 +197,15 @@ export default function ImportPreview({ isOpen, onClose, previewData, onImportCo
               </div>
               <div style={{
                 width: '100%',
-                height: '8px',
-                background: '#edf0f5',
+                height: '6px',
+                background: '#e2e8f0',
                 borderRadius: '4px',
                 overflow: 'hidden'
               }}>
                 <div style={{
                   width: `${progress}%`,
                   height: '100%',
-                  background: '#245de8',
+                  background: '#2563eb',
                   transition: 'width 0.3s ease'
                 }} />
               </div>
@@ -219,10 +214,10 @@ export default function ImportPreview({ isOpen, onClose, previewData, onImportCo
 
           {/* Preview Table of First 20 Rows */}
           <div style={{ marginBottom: '14px' }}>
-            <h4 style={{ fontSize: '14px', fontWeight: 700, marginBottom: '8px' }}>
+            <h4 style={{ fontSize: '13px', fontWeight: 600, marginBottom: '8px' }}>
               Preview (Showing first {Math.min(20, validRows.length)} valid rows):
             </h4>
-            <div className="table-container" style={{ maxHeight: '32vh', border: '1px solid #dfe6f0', borderRadius: '8px' }}>
+            <div className="table-container" style={{ maxHeight: '30vh', border: '1px solid #e2e8f0', borderRadius: '8px' }}>
               <table>
                 <thead>
                   <tr>
@@ -242,12 +237,12 @@ export default function ImportPreview({ isOpen, onClose, previewData, onImportCo
                       <td>{r.company}</td>
                       <td>{r.phone}</td>
                       <td><StatusBadge status={r.status} /></td>
-                      <td style={{ color: '#66748b' }}>{r.next_action || '—'}</td>
+                      <td style={{ color: '#64748b' }}>{r.next_action || '—'}</td>
                     </tr>
                   ))}
                   {validRows.length === 0 && (
                     <tr>
-                      <td colSpan={6} style={{ textAlign: 'center', padding: '20px', color: '#66748b' }}>
+                      <td colSpan={6} style={{ textAlign: 'center', padding: '20px', color: '#64748b' }}>
                         No valid new rows found.
                       </td>
                     </tr>
@@ -260,8 +255,8 @@ export default function ImportPreview({ isOpen, onClose, previewData, onImportCo
           {/* Invalid Rows Accordion */}
           {invalidRows.length > 0 && (
             <div style={{
-              background: '#fff9e9',
-              border: '1px solid #fedb99',
+              background: '#fffbeb',
+              border: '1px solid #fde68a',
               borderRadius: '8px',
               padding: '12px',
               marginBottom: '12px'
@@ -275,17 +270,17 @@ export default function ImportPreview({ isOpen, onClose, previewData, onImportCo
                 }}
                 onClick={() => setShowInvalidDetails(prev => !prev)}
               >
-                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '13px', fontWeight: 600, color: '#a65a00' }}>
-                  <AlertTriangle size={16} />
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '12.5px', fontWeight: 600, color: '#92400e' }}>
+                  <AlertTriangle size={15} />
                   <span>{invalidRows.length} invalid rows will be skipped</span>
                 </div>
-                <button type="button" className="btn btn-sm" style={{ border: 'none', background: 'none' }}>
-                  {showInvalidDetails ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
+                <button type="button" className="btn btn-sm btn-ghost" style={{ padding: 0 }}>
+                  {showInvalidDetails ? <ChevronUp size={15} /> : <ChevronDown size={15} />}
                 </button>
               </div>
 
               {showInvalidDetails && (
-                <div style={{ marginTop: '10px', maxHeight: '150px', overflowY: 'auto' }}>
+                <div style={{ marginTop: '10px', maxHeight: '140px', overflowY: 'auto' }}>
                   <table style={{ fontSize: '12px' }}>
                     <thead>
                       <tr>
@@ -303,7 +298,7 @@ export default function ImportPreview({ isOpen, onClose, previewData, onImportCo
                           <td>{inv.name}</td>
                           <td>{inv.company}</td>
                           <td>{inv.phone}</td>
-                          <td style={{ color: '#b42318' }}>{inv.reason}</td>
+                          <td style={{ color: '#dc2626' }}>{inv.reason}</td>
                         </tr>
                       ))}
                     </tbody>
@@ -319,11 +314,11 @@ export default function ImportPreview({ isOpen, onClose, previewData, onImportCo
             {(duplicateRows.length > 0 || invalidRows.length > 0) && (
               <button
                 type="button"
-                className="btn btn-sm"
+                className="btn btn-sm btn-ghost"
                 onClick={handleDownloadSkipped}
                 title="Download skipped rows as CSV"
               >
-                <FileDown size={14} />
+                <FileDown size={13} />
                 <span>Download Skipped Rows CSV</span>
               </button>
             )}
@@ -332,7 +327,7 @@ export default function ImportPreview({ isOpen, onClose, previewData, onImportCo
           <div style={{ display: 'flex', gap: '8px' }}>
             <button
               type="button"
-              className="btn"
+              className="btn btn-sm btn-ghost"
               onClick={onClose}
               disabled={importing}
             >
@@ -340,11 +335,11 @@ export default function ImportPreview({ isOpen, onClose, previewData, onImportCo
             </button>
             <button
               type="button"
-              className="btn btn-primary"
+              className="btn btn-sm btn-primary"
               onClick={handleConfirmImport}
               disabled={importing || validRows.length === 0}
             >
-              <DownloadCloud size={14} />
+              <DownloadCloud size={13} />
               <span>{importing ? 'Importing…' : `Confirm Import (${validRows.length})`}</span>
             </button>
           </div>
@@ -353,4 +348,3 @@ export default function ImportPreview({ isOpen, onClose, previewData, onImportCo
     </div>
   );
 }
-

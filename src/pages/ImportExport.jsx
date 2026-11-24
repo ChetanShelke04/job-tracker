@@ -10,8 +10,7 @@ import {
   FileText,
   Database,
   CheckCircle2,
-  AlertCircle,
-  HelpCircle
+  AlertCircle
 } from 'lucide-react';
 
 export default function ImportExport() {
@@ -92,7 +91,6 @@ export default function ImportExport() {
     setSuccessMessage('');
 
     try {
-      // Parse file with duplicate checking against currently loaded contacts
       const result = await parseImportFile(file, contacts);
       setPreviewData(result);
       setPreviewModalOpen(true);
@@ -112,22 +110,20 @@ export default function ImportExport() {
 
   return (
     <div>
-      {/* Header */}
-      <div className="page-header">
-        <div className="page-title">
-          <h2>Data Import & Export</h2>
-          <p>
-            Backup your contacts and call histories, download CSV reports, or import records from other trackers
-          </p>
+      {/* Banner */}
+      <div className="page-title-banner">
+        <div>
+          <h2>Data Backup & Import Center</h2>
+          <p>Download secure snapshots of your records or import contacts from CSV and legacy backups.</p>
         </div>
       </div>
 
       {parsingError && (
         <div style={{
-          background: '#ffebe9',
-          color: '#b42318',
-          border: '1px solid #fecdca',
-          padding: '14px 18px',
+          background: '#fef2f2',
+          color: '#dc2626',
+          border: '1px solid #fecaca',
+          padding: '12px 16px',
           borderRadius: '8px',
           marginBottom: '20px',
           display: 'flex',
@@ -135,17 +131,17 @@ export default function ImportExport() {
           gap: '10px',
           fontSize: '13px'
         }}>
-          <AlertCircle size={18} />
+          <AlertCircle size={16} />
           <span>{parsingError}</span>
         </div>
       )}
 
       {successMessage && (
         <div style={{
-          background: '#e1f7e9',
-          color: '#137a45',
-          border: '1px solid #b7ebca',
-          padding: '14px 18px',
+          background: '#ecfdf5',
+          color: '#059669',
+          border: '1px solid #a7f3d0',
+          padding: '12px 16px',
           borderRadius: '8px',
           marginBottom: '20px',
           display: 'flex',
@@ -153,42 +149,42 @@ export default function ImportExport() {
           gap: '10px',
           fontSize: '13px'
         }}>
-          <CheckCircle2 size={18} />
+          <CheckCircle2 size={16} />
           <span>{successMessage}</span>
         </div>
       )}
 
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(360px, 1fr))', gap: '24px' }}>
-        {/* IMPORT CARD */}
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(360px, 1fr))', gap: '22px' }}>
+        {/* IMPORT SECTION */}
         <section className="panel">
           <div className="panel-head">
             <div>
-              <h3>Import Data</h3>
+              <h3>Import Contacts & Data</h3>
               <p>Supports .csv, .json, and legacy HR Tracker HTML backups</p>
             </div>
-            <Upload size={18} style={{ color: '#245de8' }} />
+            <Upload size={17} style={{ color: '#2563eb' }} />
           </div>
 
           <div className="panel-body">
             <div style={{
-              border: '2px dashed #cbd5e3',
-              borderRadius: '12px',
+              border: '2px dashed #cbd5e1',
+              borderRadius: '10px',
               padding: '36px 20px',
               textAlign: 'center',
-              background: '#f8faff',
+              background: '#f8fafc',
               marginBottom: '16px'
             }}>
-              <Upload size={36} style={{ color: '#245de8', margin: '0 auto 12px' }} />
-              <h4 style={{ fontSize: '15px', fontWeight: 700, marginBottom: '6px' }}>
-                Choose a File to Import
+              <Upload size={32} style={{ color: '#2563eb', margin: '0 auto 10px' }} />
+              <h4 style={{ fontSize: '14.5px', fontWeight: 600, marginBottom: '4px' }}>
+                Upload CSV or JSON Backup
               </h4>
-              <p style={{ fontSize: '12px', color: '#66748b', marginBottom: '16px', maxWidth: '340px', margin: '0 auto 16px' }}>
-                Select a CSV spreadsheet or JSON backup. An interactive preview will appear before anything is saved.
+              <p style={{ fontSize: '12.5px', color: '#64748b', marginBottom: '16px', maxWidth: '320px', margin: '0 auto 16px' }}>
+                An interactive preview will display valid rows and flag duplicates before saving.
               </p>
 
               <label className="btn btn-primary" style={{ cursor: 'pointer', display: 'inline-flex' }}>
-                <Upload size={15} />
-                <span>Select .CSV or .JSON File</span>
+                <Upload size={14} />
+                <span>Select File to Import</span>
                 <input
                   ref={fileInputRef}
                   type="file"
@@ -199,46 +195,46 @@ export default function ImportExport() {
               </label>
             </div>
 
-            <div style={{ background: '#f1f5f9', borderRadius: '8px', padding: '14px', fontSize: '12px', color: '#475569' }}>
-              <strong>Legacy Tracker Compatible:</strong> You can directly upload backup files generated by the original single-file HTML tracker (<code>hr-tracker-backup-*.json</code>). Old contact IDs, notes, and call histories are automatically mapped and securely synchronized with your account!
+            <div style={{ background: '#f1f5f9', borderRadius: '8px', padding: '12px 14px', fontSize: '12px', color: '#475569', lineHeight: 1.5 }}>
+              <strong>Legacy Backup Compatible:</strong> Directly upload backups from your original single-file tracker (<code>hr-tracker-backup-*.json</code>). Old contact IDs and call histories are automatically mapped and securely linked to your account!
             </div>
           </div>
         </section>
 
-        {/* EXPORT CARD */}
+        {/* EXPORT SECTION */}
         <section className="panel">
           <div className="panel-head">
             <div>
               <h3>Export & Backups</h3>
-              <p>Download your private records anytime</p>
+              <p>Save local backups and Excel-ready spreadsheets</p>
             </div>
-            <Download size={18} style={{ color: '#137a45' }} />
+            <Download size={17} style={{ color: '#059669' }} />
           </div>
 
           <div className="panel-body">
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
               {/* Full JSON Backup */}
               <div style={{
                 display: 'flex',
                 justifyContent: 'space-between',
                 alignItems: 'center',
-                padding: '14px',
-                border: '1px solid #dfe6f0',
+                padding: '12px 14px',
+                border: '1px solid #e2e8f0',
                 borderRadius: '8px',
                 background: '#ffffff'
               }}>
                 <div>
-                  <div style={{ fontWeight: 700, fontSize: '14px', display: 'flex', alignItems: 'center', gap: '6px' }}>
-                    <Database size={16} style={{ color: '#245de8' }} />
+                  <div style={{ fontWeight: 600, fontSize: '13.5px', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                    <Database size={15} style={{ color: '#2563eb' }} />
                     <span>Complete JSON Backup</span>
                   </div>
-                  <p style={{ fontSize: '12px', color: '#66748b', marginTop: '2px' }}>
-                    Full export of all your contacts, call logs, and job applications.
+                  <p style={{ fontSize: '11.5px', color: '#64748b', marginTop: '1px' }}>
+                    Full snapshot of all contacts, call histories, and applications.
                   </p>
                 </div>
-                <button className="btn btn-sm" onClick={handleExportJson}>
+                <button type="button" className="btn btn-sm" onClick={handleExportJson}>
                   <Download size={13} />
-                  <span>Download JSON</span>
+                  <span>Download</span>
                 </button>
               </div>
 
@@ -247,23 +243,23 @@ export default function ImportExport() {
                 display: 'flex',
                 justifyContent: 'space-between',
                 alignItems: 'center',
-                padding: '14px',
-                border: '1px solid #dfe6f0',
+                padding: '12px 14px',
+                border: '1px solid #e2e8f0',
                 borderRadius: '8px',
                 background: '#ffffff'
               }}>
                 <div>
-                  <div style={{ fontWeight: 700, fontSize: '14px', display: 'flex', alignItems: 'center', gap: '6px' }}>
-                    <FileSpreadsheet size={16} style={{ color: '#137a45' }} />
+                  <div style={{ fontWeight: 600, fontSize: '13.5px', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                    <FileSpreadsheet size={15} style={{ color: '#059669' }} />
                     <span>HR Contacts (CSV)</span>
                   </div>
-                  <p style={{ fontSize: '12px', color: '#66748b', marginTop: '2px' }}>
-                    Excel-ready spreadsheet with UTF-8 BOM encoding.
+                  <p style={{ fontSize: '11.5px', color: '#64748b', marginTop: '1px' }}>
+                    Excel-formatted spreadsheet with UTF-8 BOM encoding.
                   </p>
                 </div>
-                <button className="btn btn-sm" onClick={handleExportContactsCsv}>
+                <button type="button" className="btn btn-sm" onClick={handleExportContactsCsv}>
                   <Download size={13} />
-                  <span>Export CSV</span>
+                  <span>Export</span>
                 </button>
               </div>
 
@@ -272,41 +268,41 @@ export default function ImportExport() {
                 display: 'flex',
                 justifyContent: 'space-between',
                 alignItems: 'center',
-                padding: '14px',
-                border: '1px solid #dfe6f0',
+                padding: '12px 14px',
+                border: '1px solid #e2e8f0',
                 borderRadius: '8px',
                 background: '#ffffff'
               }}>
                 <div>
-                  <div style={{ fontWeight: 700, fontSize: '14px', display: 'flex', alignItems: 'center', gap: '6px' }}>
-                    <FileText size={16} style={{ color: '#6941c6' }} />
+                  <div style={{ fontWeight: 600, fontSize: '13.5px', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                    <FileText size={15} style={{ color: '#7c3aed' }} />
                     <span>Job Applications (CSV)</span>
                   </div>
-                  <p style={{ fontSize: '12px', color: '#66748b', marginTop: '2px' }}>
+                  <p style={{ fontSize: '11.5px', color: '#64748b', marginTop: '1px' }}>
                     Spreadsheet of your job search pipeline and salary offers.
                   </p>
                 </div>
-                <button className="btn btn-sm" onClick={handleExportAppsCsv}>
+                <button type="button" className="btn btn-sm" onClick={handleExportAppsCsv}>
                   <Download size={13} />
-                  <span>Export CSV</span>
+                  <span>Export</span>
                 </button>
               </div>
 
               {/* Blank Templates */}
               <div style={{
-                padding: '14px',
-                border: '1px solid #dfe6f0',
+                padding: '12px 14px',
+                border: '1px solid #e2e8f0',
                 borderRadius: '8px',
-                background: '#f8faff'
+                background: '#f8fafc'
               }}>
-                <div style={{ fontWeight: 700, fontSize: '13px', marginBottom: '8px' }}>
+                <div style={{ fontWeight: 600, fontSize: '12.5px', marginBottom: '8px' }}>
                   Blank CSV Templates
                 </div>
                 <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
-                  <button className="btn btn-sm" onClick={downloadContactsTemplate}>
+                  <button type="button" className="btn btn-sm" onClick={downloadContactsTemplate}>
                     <span>Contacts Template</span>
                   </button>
-                  <button className="btn btn-sm" onClick={downloadApplicationsTemplate}>
+                  <button type="button" className="btn btn-sm" onClick={downloadApplicationsTemplate}>
                     <span>Applications Template</span>
                   </button>
                 </div>
@@ -326,4 +322,3 @@ export default function ImportExport() {
     </div>
   );
 }
-

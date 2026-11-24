@@ -105,15 +105,15 @@ export default function ApplicationModal({ isOpen, onClose, appToEdit = null }) 
 
   return (
     <div className="modal-overlay" onClick={onClose} role="dialog" aria-modal="true">
-      <div className="modal" onClick={(e) => e.stopPropagation()}>
+      <div className="modal-card" onClick={(e) => e.stopPropagation()}>
         <div className="modal-header">
           <div>
-            <h3>{appToEdit ? 'Edit Job Application' : 'Add Job Application'}</h3>
+            <h3>{appToEdit ? 'Edit Job Opportunity' : 'Add Job Application'}</h3>
             <p>Track job listings, interview rounds, and salary offers</p>
           </div>
           <button
             type="button"
-            className="btn btn-sm btn-icon"
+            className="btn btn-sm btn-icon btn-ghost"
             onClick={onClose}
             aria-label="Close"
           >
@@ -125,21 +125,21 @@ export default function ApplicationModal({ isOpen, onClose, appToEdit = null }) 
           <div className="modal-body">
             {error && (
               <div style={{
-                background: '#ffebe9',
-                color: '#b42318',
-                border: '1px solid #fecdca',
+                background: '#fef2f2',
+                color: '#dc2626',
+                border: '1px solid #fecaca',
                 padding: '10px 14px',
-                borderRadius: '6px',
+                borderRadius: '8px',
                 marginBottom: '14px',
-                fontSize: '13px'
+                fontSize: '12.5px'
               }}>
                 {error}
               </div>
             )}
 
-            <div className="form-grid">
-              <div className="form-group">
-                <label htmlFor="app-company">Company Name <span className="required">*</span></label>
+            <div className="form-grid-2">
+              <div className="form-group-item">
+                <label htmlFor="app-company">Company Name <span className="required-star">*</span></label>
                 <input
                   id="app-company"
                   ref={companyInputRef}
@@ -151,8 +151,8 @@ export default function ApplicationModal({ isOpen, onClose, appToEdit = null }) 
                 />
               </div>
 
-              <div className="form-group">
-                <label htmlFor="app-title">Job Title <span className="required">*</span></label>
+              <div className="form-group-item">
+                <label htmlFor="app-title">Job Title <span className="required-star">*</span></label>
                 <input
                   id="app-title"
                   type="text"
@@ -163,7 +163,7 @@ export default function ApplicationModal({ isOpen, onClose, appToEdit = null }) 
                 />
               </div>
 
-              <div className="form-group">
+              <div className="form-group-item">
                 <label htmlFor="app-status">Application Status</label>
                 <select
                   id="app-status"
@@ -176,7 +176,7 @@ export default function ApplicationModal({ isOpen, onClose, appToEdit = null }) 
                 </select>
               </div>
 
-              <div className="form-group">
+              <div className="form-group-item">
                 <label htmlFor="app-date">Date Applied</label>
                 <input
                   id="app-date"
@@ -186,7 +186,7 @@ export default function ApplicationModal({ isOpen, onClose, appToEdit = null }) 
                 />
               </div>
 
-              <div className="form-group">
+              <div className="form-group-item">
                 <label htmlFor="app-location">Location</label>
                 <input
                   id="app-location"
@@ -197,18 +197,18 @@ export default function ApplicationModal({ isOpen, onClose, appToEdit = null }) 
                 />
               </div>
 
-              <div className="form-group">
+              <div className="form-group-item">
                 <label htmlFor="app-url">Job Posting URL</label>
                 <input
                   id="app-url"
                   type="url"
-                  placeholder="https://..."
+                  placeholder="https://careers..."
                   value={jobUrl}
                   onChange={(e) => setJobUrl(e.target.value)}
                 />
               </div>
 
-              <div className="form-group">
+              <div className="form-group-item">
                 <label htmlFor="app-expected-ctc">Expected CTC (₹ / annum)</label>
                 <input
                   id="app-expected-ctc"
@@ -219,7 +219,7 @@ export default function ApplicationModal({ isOpen, onClose, appToEdit = null }) 
                 />
               </div>
 
-              <div className="form-group">
+              <div className="form-group-item">
                 <label htmlFor="app-offered-ctc">Offered CTC (₹ / annum)</label>
                 <input
                   id="app-offered-ctc"
@@ -230,7 +230,7 @@ export default function ApplicationModal({ isOpen, onClose, appToEdit = null }) 
                 />
               </div>
 
-              <div className="form-group">
+              <div className="form-group-item">
                 <label htmlFor="app-recruiter-name">Recruiter Name</label>
                 <input
                   id="app-recruiter-name"
@@ -241,7 +241,7 @@ export default function ApplicationModal({ isOpen, onClose, appToEdit = null }) 
                 />
               </div>
 
-              <div className="form-group">
+              <div className="form-group-item">
                 <label htmlFor="app-recruiter-phone">Recruiter Phone</label>
                 <input
                   id="app-recruiter-phone"
@@ -252,11 +252,11 @@ export default function ApplicationModal({ isOpen, onClose, appToEdit = null }) 
                 />
               </div>
 
-              <div className="form-group full-width">
+              <div className="form-group-item full-span">
                 <label htmlFor="app-notes">Notes & Interview Details</label>
                 <textarea
                   id="app-notes"
-                  placeholder="Tech stack, assignment details, interviewers, feedback, notice period discussed…"
+                  placeholder="Tech stack, interview rounds, assignment feedback, notice period discussed…"
                   value={notes}
                   onChange={(e) => setNotes(e.target.value)}
                   rows={3}
@@ -266,11 +266,11 @@ export default function ApplicationModal({ isOpen, onClose, appToEdit = null }) 
           </div>
 
           <div className="modal-footer">
-            <button type="button" className="btn" onClick={onClose} disabled={saving}>
+            <button type="button" className="btn btn-sm btn-ghost" onClick={onClose} disabled={saving}>
               Cancel
             </button>
-            <button type="submit" className="btn btn-primary" disabled={saving}>
-              <Briefcase size={14} />
+            <button type="submit" className="btn btn-sm btn-primary" disabled={saving}>
+              <Briefcase size={13} />
               <span>{saving ? 'Saving…' : appToEdit ? 'Save Changes' : 'Save Application'}</span>
             </button>
           </div>
@@ -279,4 +279,3 @@ export default function ApplicationModal({ isOpen, onClose, appToEdit = null }) 
     </div>
   );
 }
-
