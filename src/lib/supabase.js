@@ -55,6 +55,11 @@ export function formatSupabaseError(error) {
     return 'Your login session has expired. Please log in again.';
   }
 
+  // Database table permissions missing in Supabase
+  if (msg.includes('permission denied for table') || msg.includes('permission denied for schema')) {
+    return 'Database table permissions missing. Please run the GRANT permissions SQL in your Supabase SQL Editor.';
+  }
+
   // Row Level Security violation
   if (msg.includes('row-level security') || msg.includes('permission denied')) {
     return 'Access denied. You only have permission to view and modify your own records.';
