@@ -17,9 +17,7 @@ import {
   Plus,
   ArrowRight,
   Clock,
-  FileSpreadsheet,
-  CheckCircle2,
-  CalendarCheck
+  FileSpreadsheet
 } from 'lucide-react';
 
 export default function Dashboard() {
@@ -165,7 +163,12 @@ export default function Dashboard() {
       </div>
 
       {/* Main Content Sections: 2 Columns */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(360px, 1fr))', gap: '20px', marginBottom: '22px' }}>
+      <div style={{
+        display: 'grid',
+        gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 340px), 1fr))',
+        gap: '16px',
+        marginBottom: '20px'
+      }}>
         {/* Urgent Follow-ups List */}
         <section className="panel">
           <div className="panel-head">
@@ -191,54 +194,95 @@ export default function Dashboard() {
                 <p>No urgent follow-ups pending right now. Great job keeping in touch!</p>
               </div>
             ) : (
-              <div className="table-container">
-                <table>
-                  <thead>
-                    <tr>
-                      <th>HR Contact</th>
-                      <th>Phone</th>
-                      <th>Due Date</th>
-                      <th style={{ textAlign: 'right' }}>Action</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {urgentFollowUps.map(c => {
-                      const overdue = isOverdue(c.followup_date);
-                      return (
-                        <tr key={c.id}>
-                          <td>
-                            <div className="table-cell-name">{c.name}</div>
-                            <div className="table-cell-sub">{c.company}</div>
-                          </td>
-                          <td>
-                            <a href={`tel:${c.phone}`} className="phone-action-link">
-                              <Phone size={12} />
-                              <span>{c.phone}</span>
-                            </a>
-                          </td>
-                          <td>
-                            <span className={overdue ? 'due-indicator' : 'today-indicator'}>
-                              {overdue && <AlertTriangle size={12} />}
-                              {formatDate(c.followup_date)}
-                            </span>
-                          </td>
-                          <td style={{ textAlign: 'right' }}>
-                            <button
-                              type="button"
-                              className="btn btn-sm btn-primary"
-                              onClick={() => handleOpenCallModal(c)}
-                              title="Log Call Outcome"
-                            >
-                              <PhoneCall size={12} />
-                              <span>Log Call</span>
-                            </button>
-                          </td>
-                        </tr>
-                      );
-                    })}
-                  </tbody>
-                </table>
-              </div>
+              <>
+                {/* Desktop Table View */}
+                <div className="table-container desktop-table-view">
+                  <table>
+                    <thead>
+                      <tr>
+                        <th>HR Contact</th>
+                        <th>Phone</th>
+                        <th>Due Date</th>
+                        <th style={{ textAlign: 'right' }}>Action</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {urgentFollowUps.map(c => {
+                        const overdue = isOverdue(c.followup_date);
+                        return (
+                          <tr key={c.id}>
+                            <td>
+                              <div className="table-cell-name">{c.name}</div>
+                              <div className="table-cell-sub">{c.company}</div>
+                            </td>
+                            <td>
+                              <a href={`tel:${c.phone}`} className="phone-action-link">
+                                <Phone size={12} />
+                                <span>{c.phone}</span>
+                              </a>
+                            </td>
+                            <td>
+                              <span className={overdue ? 'due-indicator' : 'today-indicator'}>
+                                {overdue && <AlertTriangle size={12} />}
+                                {formatDate(c.followup_date)}
+                              </span>
+                            </td>
+                            <td style={{ textAlign: 'right' }}>
+                              <button
+                                type="button"
+                                className="btn btn-sm btn-primary"
+                                onClick={() => handleOpenCallModal(c)}
+                                title="Log Call Outcome"
+                              >
+                                <PhoneCall size={12} />
+                                <span>Log Call</span>
+                              </button>
+                            </td>
+                          </tr>
+                        );
+                      })}
+                    </tbody>
+                  </table>
+                </div>
+
+                {/* Mobile Cards View */}
+                <div className="mobile-card-stack" style={{ padding: '8px' }}>
+                  {urgentFollowUps.map(c => {
+                    const overdue = isOverdue(c.followup_date);
+                    return (
+                      <div key={c.id} className="crm-mobile-card" style={{ padding: '10px 12px' }}>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '6px' }}>
+                          <div>
+                            <div className="mobile-card-title" style={{ fontSize: '13.5px' }}>{c.name}</div>
+                            <div className="mobile-card-sub">{c.company}</div>
+                          </div>
+                          <span className={overdue ? 'due-indicator' : 'today-indicator'}>
+                            {overdue && <AlertTriangle size={11} />}
+                            {formatDate(c.followup_date)}
+                          </span>
+                        </div>
+
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '6px' }}>
+                          <a href={`tel:${c.phone}`} className="phone-action-link">
+                            <Phone size={13} />
+                            <span>{c.phone}</span>
+                          </a>
+
+                          <button
+                            type="button"
+                            className="btn btn-sm btn-primary"
+                            onClick={() => handleOpenCallModal(c)}
+                            style={{ minHeight: '34px', padding: '4px 10px' }}
+                          >
+                            <PhoneCall size={12} />
+                            <span>Call</span>
+                          </button>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </>
             )}
           </div>
         </section>
@@ -268,50 +312,71 @@ export default function Dashboard() {
                 <p>Start calling recruiters and record your conversations.</p>
               </div>
             ) : (
-              <div className="table-container">
-                <table>
-                  <thead>
-                    <tr>
-                      <th>HR / Company</th>
-                      <th>Outcome</th>
-                      <th>Called At</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {recentCalls.map((call, idx) => (
-                      <tr key={call.id || idx}>
-                        <td>
-                          <div className="table-cell-name">
-                            {call.contacts?.name || 'HR Recruiter'}
-                          </div>
-                          <div className="table-cell-sub">
-                            {call.contacts?.company || 'Company'}
-                          </div>
-                        </td>
-                        <td>
-                          <StatusBadge status={call.outcome} />
-                          {call.notes && (
-                            <div style={{
-                              fontSize: '11px',
-                              color: '#64748b',
-                              marginTop: '2px',
-                              maxWidth: '180px',
-                              overflow: 'hidden',
-                              textOverflow: 'ellipsis',
-                              whiteSpace: 'nowrap'
-                            }}>
-                              {call.notes}
-                            </div>
-                          )}
-                        </td>
-                        <td style={{ fontSize: '12px', color: '#64748b' }}>
-                          {formatDateTime(call.called_at)}
-                        </td>
+              <>
+                {/* Desktop Table View */}
+                <div className="table-container desktop-table-view">
+                  <table>
+                    <thead>
+                      <tr>
+                        <th>HR / Company</th>
+                        <th>Outcome</th>
+                        <th>Called At</th>
                       </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
+                    </thead>
+                    <tbody>
+                      {recentCalls.map((call, idx) => (
+                        <tr key={call.id || idx}>
+                          <td>
+                            <div className="table-cell-name">
+                              {call.contacts?.name || 'HR Recruiter'}
+                            </div>
+                            <div className="table-cell-sub">
+                              {call.contacts?.company || 'Company'}
+                            </div>
+                          </td>
+                          <td>
+                            <StatusBadge status={call.outcome} />
+                            {call.notes && (
+                              <div style={{
+                                fontSize: '11px',
+                                color: '#64748b',
+                                marginTop: '2px',
+                                maxWidth: '180px',
+                                overflow: 'hidden',
+                                textOverflow: 'ellipsis',
+                                whiteSpace: 'nowrap'
+                              }}>
+                                {call.notes}
+                              </div>
+                            )}
+                          </td>
+                          <td style={{ fontSize: '12px', color: '#64748b' }}>
+                            {formatDateTime(call.called_at)}
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+
+                {/* Mobile Cards View */}
+                <div className="mobile-card-stack" style={{ padding: '8px' }}>
+                  {recentCalls.map((call, idx) => (
+                    <div key={call.id || idx} className="crm-mobile-card" style={{ padding: '10px 12px' }}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '4px' }}>
+                        <span className="table-cell-name" style={{ fontSize: '13px' }}>
+                          {call.contacts?.name || 'HR Recruiter'} ({call.contacts?.company || 'Company'})
+                        </span>
+                        <StatusBadge status={call.outcome} />
+                      </div>
+                      <div style={{ fontSize: '11.5px', color: '#64748b', display: 'flex', justifyContent: 'space-between' }}>
+                        <span>{formatDateTime(call.called_at)}</span>
+                        {call.notes && <span style={{ fontStyle: 'italic', maxWidth: '160px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{call.notes}</span>}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </>
             )}
           </div>
         </section>
@@ -336,7 +401,7 @@ export default function Dashboard() {
           </div>
 
           <div className="panel-body" style={{ padding: '0' }}>
-            <div className="table-container">
+            <div className="table-container desktop-table-view">
               <table>
                 <thead>
                   <tr>
@@ -375,6 +440,25 @@ export default function Dashboard() {
                   ))}
                 </tbody>
               </table>
+            </div>
+
+            {/* Mobile View for Recent Applications */}
+            <div className="mobile-card-stack" style={{ padding: '8px' }}>
+              {recentApplications.map(app => (
+                <div key={app.id} className="crm-mobile-card" style={{ padding: '10px 12px' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '4px' }}>
+                    <div>
+                      <div className="mobile-card-title" style={{ fontSize: '13.5px' }}>{app.company_name}</div>
+                      <div className="mobile-card-sub">{app.job_title}</div>
+                    </div>
+                    <StatusBadge status={app.application_status} type="application" />
+                  </div>
+                  <div style={{ fontSize: '11.5px', color: '#64748b', display: 'flex', justifyContent: 'space-between', marginTop: '4px' }}>
+                    <span>{formatDate(app.application_date)}</span>
+                    {app.expected_ctc && <span style={{ fontWeight: 600, color: '#2563eb' }}>₹{Number(app.expected_ctc).toLocaleString('en-IN')}</span>}
+                  </div>
+                </div>
+              ))}
             </div>
           </div>
         </section>
